@@ -97,8 +97,15 @@ export default function RecommendationCard({
         }}
       >
         <span>By {recommendation.createdByName}</span>
-        <span style={{ color: isTop ? "#f59e0b" : "var(--purple)", fontWeight: 600 }}>
-          {isTop ? "✨ " : ""}{recommendation.upvotes} upvotes
+        <span className="flex items-center gap-2">
+          <span style={{ color: isTop ? "#f59e0b" : "var(--purple)", fontWeight: 600 }}>
+            {isTop ? "✨ " : ""}👍 {recommendation.upvotes}
+          </span>
+          {(recommendation.downvotes ?? 0) > 0 && (
+            <span style={{ color: "#f43f5e", fontWeight: 600 }}>
+              👎 {recommendation.downvotes}
+            </span>
+          )}
         </span>
       </div>
     </Link>

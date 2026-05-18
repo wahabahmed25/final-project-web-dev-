@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Caveat } from "next/font/google";
 import Navbar from "@/components/NavBar";
+import CorkboardDeco from "@/components/CorkboardDeco";
+import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const caveat = Caveat({
   subsets: ["latin"],
   variable: "--font-caveat",
   weight: ["400", "600", "700"],
 });
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Hunter Recommendations Hub",
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={caveat.variable}>
+        <CorkboardDeco />
         <ThemeProvider>
           <AuthProvider>
             <Navbar />

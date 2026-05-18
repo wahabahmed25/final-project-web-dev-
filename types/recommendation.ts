@@ -19,4 +19,5 @@ export type Recommendation = {
   createdByName: string;
   createdAt?: Timestamp;
   upvotes: number;
+  downvotes: number;
 };

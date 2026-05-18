@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { getRecommendationById, upvoteRecommendation } from "@/lib/recommendation";
+import { getRecommendationById, upvoteRecommendation, downvoteRecommendation } from "@/lib/recommendation";
 import { getCategoryLabel } from "@/data/categories";
 import type { Recommendation } from "@/types/recommendation";
 
@@ -16,6 +16,7 @@ export default function RecommendationDetailPage() {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [loading, setLoading] = useState(true);
   const [upvoting, setUpvoting] = useState(false);
+  const [downvoting, setDownvoting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -46,6 +47,20 @@ export default function RecommendationDetailPage() {
       setError("Could not upvote right now.");
     } finally {
       setUpvoting(false);
+    }
+  }
+
+  async function handleDownvote() {
+    if (!recommendation) return;
+    try {
+      setDownvoting(true);
+      await downvoteRecommendation(recommendation.id);
+      setRecommendation({ ...recommendation, downvotes: (recommendation.downvotes ?? 0) + 1 });
+    } catch (err) {
+      console.error(err);
+      setError("Could not downvote right now.");
+    } finally {
+      setDownvoting(false);
     }
   }
 
@@ -175,20 +190,30 @@ export default function RecommendationDetailPage() {
             )}
 
             <div
-              className="border-t pt-6"
+              className="border-t pt-6 flex flex-wrap gap-3 items-center"
               style={{ borderColor: "var(--border)" }}
             >
               {user ? (
-                <button
-                  onClick={handleUpvote}
-                  disabled={upvoting}
-                  className="btn-purple glow-sm"
-                >
-                  {upvoting ? "Upvoting..." : `Upvote (${recommendation.upvotes})`}
-                </button>
+                <>
+                  <button
+                    onClick={handleUpvote}
+                    disabled={upvoting}
+                    className="btn-purple glow-sm"
+                  >
+                    {upvoting ? "..." : `👍 Upvote (${recommendation.upvotes})`}
+                  </button>
+                  <button
+                    onClick={handleDownvote}
+                    disabled={downvoting}
+                    className="btn-outline"
+                    style={{ borderColor: "#f43f5e", color: "#f43f5e" }}
+                  >
+                    {downvoting ? "..." : `👎 Downvote (${recommendation.downvotes ?? 0})`}
+                  </button>
+                </>
               ) : (
                 <Link href="/login" className="btn-purple glow-sm">
-                  Login to upvote
+                  Login to vote
                 </Link>
               )}
             </div>

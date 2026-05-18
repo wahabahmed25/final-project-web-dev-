@@ -7,11 +7,11 @@ export default function HomePage() {
     <div className="corkboard min-h-screen">
       {/* ── Hero notice ───────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-4 pt-20 pb-8">
-        <div className="mx-auto max-w-2xl">
+        <div className="flex justify-center">
           {/* Big center sticky note for hero */}
           <div
-            className="sticky-note note-yellow text-center px-10 py-12 mx-auto"
-            style={{ maxWidth: "600px" }}
+            className="sticky-note note-yellow text-center px-12 py-16 w-full"
+            style={{ maxWidth: "780px" }}
           >
             <span
               className="inline-block rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest mb-5"
@@ -24,7 +24,7 @@ export default function HomePage() {
             </span>
 
             <h1
-              className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl text-glow"
+              className="text-6xl font-black leading-tight sm:text-7xl text-glow"
               style={{ color: "var(--fg-primary)" }}
             >
               Find trusted spots near Hunter — fast.
