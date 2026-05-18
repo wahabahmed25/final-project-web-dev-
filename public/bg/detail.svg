@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <rect width="240" height="240" fill="rgba(255,248,230,0.07)"/>
+  <!-- Magnifying glass -->
+  <g transform="translate(66,74)" opacity="0.38">
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#d97706" stroke-width="3.5"/>
+    <line x1="18" y1="18" x2="34" y2="34" stroke="#d97706" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="-8" cy="-8" r="5" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.55"/>
+  </g>
+  <!-- Document with dog-ear top-right -->
+  <g transform="translate(178,96)" opacity="0.34">
+    <path d="M-22,-36 L10,-36 L22,-24 L22,26 L-22,26 Z" fill="none" stroke="#6b7280" stroke-width="2"/>
+    <path d="M10,-36 L10,-24 L22,-24" fill="none" stroke="#6b7280" stroke-width="1.8"/>
+    <line x1="-14" y1="-12" x2="14" y2="-12" stroke="#9ca3af" stroke-width="1.5"/>
+    <line x1="-14" y1="-2" x2="14" y2="-2" stroke="#9ca3af" stroke-width="1.5"/>
+    <line x1="-14" y1="8" x2="14" y2="8" stroke="#9ca3af" stroke-width="1.5"/>
+    <line x1="-14" y1="18" x2="4" y2="18" stroke="#9ca3af" stroke-width="1.5"/>
+  </g>
+  <!-- Bookmark ribbon left -->
+  <g transform="translate(34,150)" opacity="0.35">
+    <path d="M-8,-30 L8,-30 L8,22 L0,16 L-8,22 Z" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+  </g>
+  <!-- Star rating bottom-center -->
+  <g transform="translate(120,200)" opacity="0.30">
+    <polygon points="-42,0 -40,-6 -38,0 -32,0 -36,4 -34,10 -40,6 -46,10 -44,4 -48,0" fill="#f59e0b"/>
+    <polygon points="-20,0 -18,-6 -16,0 -10,0 -14,4 -12,10 -18,6 -24,10 -22,4 -26,0" fill="#f59e0b"/>
+    <polygon points="2,0 4,-6 6,0 12,0 8,4 10,10 4,6 -2,10 0,4 -4,0" fill="#f59e0b"/>
+    <polygon points="24,0 26,-6 28,0 34,0 30,4 32,10 26,6 20,10 22,4 18,0" fill="#f59e0b"/>
+    <polygon points="46,0 48,-6 50,0 56,0 52,4 54,10 48,6 42,10 44,4 40,0" fill="#d1d5db"/>
+  </g>
+  <!-- Speech bubble bottom-right -->
+  <g transform="translate(192,170)" opacity="0.30">
+    <path d="M-20,-16 Q-20,-26 -8,-26 L18,-26 Q30,-26 30,-16 L30,-2 Q30,8 18,8 L2,8 L-8,18 L-8,8 Q-20,8 -20,-2 Z" fill="none" stroke="#6b7280" stroke-width="2"/>
+    <line x1="-10" y1="-16" x2="18" y2="-16" stroke="#9ca3af" stroke-width="1.4"/>
+    <line x1="-10" y1="-6" x2="10" y2="-6" stroke="#9ca3af" stroke-width="1.4"/>
+  </g>
+  <!-- 4-pointed diamond sparkles -->
+  <path d="M22,28 L24.5,32 L22,36 L19.5,32 Z" fill="#f59e0b" opacity="0.28"/>
+  <path d="M214,42 L216.5,46 L214,50 L211.5,46 Z" fill="#d97706" opacity="0.26"/>
+  <path d="M218,148 L220,152 L218,156 L216,152 Z" fill="#fbbf24" opacity="0.24"/>
+  <!-- Sparkle dots -->
+  <circle cx="130" cy="36" r="2.5" fill="#fbbf24" opacity="0.30"/>
+  <circle cx="22" cy="210" r="2.2" fill="#d97706" opacity="0.26"/>
+  <circle cx="212" cy="122" r="2" fill="#f59e0b" opacity="0.24"/>
+  <circle cx="50" cy="212" r="2" fill="#fbbf24" opacity="0.22"/>
+</svg>

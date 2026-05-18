@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="rgba(216,210,255,0.07)"/>
+  <!-- Padlock -->
+  <g transform="translate(136,58)" opacity="0.38">
+    <path d="M-14,0 A14,16 0 0,1 14,0" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
+    <rect x="-18" y="0" width="36" height="28" rx="4" fill="none" stroke="#7c3aed" stroke-width="3"/>
+    <circle cx="0" cy="13" r="5" fill="none" stroke="#7c3aed" stroke-width="2"/>
+    <line x1="0" y1="18" x2="0" y2="24" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <!-- Key -->
+  <g transform="translate(50,155) rotate(-42)" opacity="0.34">
+    <circle cx="0" cy="0" r="11" fill="none" stroke="#a855f7" stroke-width="3"/>
+    <circle cx="0" cy="0" r="5" fill="none" stroke="#a855f7" stroke-width="2"/>
+    <line x1="10" y1="0" x2="40" y2="0" stroke="#a855f7" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="28" y1="0" x2="28" y2="7" stroke="#a855f7" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="35" y1="0" x2="35" y2="5.5" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <!-- Moon crescent top-left -->
+  <path d="M28,26 Q16,38 22,56 Q34,70 50,62 Q38,64 30,54 Q20,40 28,26 Z" fill="#c084fc" opacity="0.30"/>
+  <!-- 5-pointed star top-center -->
+  <polygon points="100,14 103,23 112,23 105,29 108,38 100,32 92,38 95,29 88,23 97,23" fill="#a855f7" opacity="0.28"/>
+  <!-- star bottom-right -->
+  <polygon points="168,146 170,152 176,152 171,156 173,162 168,158 163,162 165,156 160,152 166,152" fill="#7c3aed" opacity="0.24"/>
+  <!-- 4-pointed diamond sparkles -->
+  <path d="M30,82 L32.5,86 L30,90 L27.5,86 Z" fill="#c084fc" opacity="0.30"/>
+  <path d="M170,104 L172.5,108 L170,112 L167.5,108 Z" fill="#c084fc" opacity="0.26"/>
+  <path d="M80,24 L82,28 L80,32 L78,28 Z" fill="#a855f7" opacity="0.24"/>
+  <!-- Sparkle dots -->
+  <circle cx="158" cy="34" r="2.5" fill="#c084fc" opacity="0.32"/>
+  <circle cx="66" cy="174" r="2" fill="#a855f7" opacity="0.28"/>
+  <circle cx="180" cy="176" r="2.2" fill="#c084fc" opacity="0.26"/>
+  <circle cx="18" cy="118" r="2" fill="#a855f7" opacity="0.24"/>
+  <circle cx="148" cy="186" r="1.8" fill="#c084fc" opacity="0.24"/>
+</svg>

@@ -74,7 +74,7 @@ export default function RecommendationDetailPage() {
 
   if (loading) {
     return (
-      <div className="corkboard min-h-screen px-4 py-12">
+      <div className="corkboard cat-bg-detail min-h-screen px-4 py-12">
         <div className="mx-auto max-w-3xl mt-6">
           <div
             className="sticky-note note-yellow p-6 text-sm"
@@ -89,7 +89,7 @@ export default function RecommendationDetailPage() {
 
   if (error) {
     return (
-      <div className="corkboard min-h-screen px-4 py-12">
+      <div className="corkboard cat-bg-detail min-h-screen px-4 py-12">
         <div className="mx-auto max-w-3xl mt-6">
           <div
             className="sticky-note note-pink p-6 text-sm"
@@ -105,7 +105,7 @@ export default function RecommendationDetailPage() {
   if (!recommendation) return null;
 
   return (
-    <div className="corkboard min-h-screen px-4 py-12">
+    <div className="corkboard cat-bg-detail min-h-screen px-4 py-12">
       <div className="mx-auto max-w-3xl">
         <Link
           href="/recommendations"

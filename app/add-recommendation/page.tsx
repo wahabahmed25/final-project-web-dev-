@@ -9,7 +9,7 @@ export default function AddRecommendationPage() {
 
   if (loading) {
     return (
-      <div className="corkboard min-h-screen flex items-start justify-center px-4 py-16">
+      <div className="corkboard cat-bg-add min-h-screen flex items-start justify-center px-4 py-16">
         <div
           className="sticky-note note-yellow w-full max-w-3xl p-6 mt-6 text-sm"
           style={{ color: "var(--fg-secondary)" }}
@@ -22,7 +22,7 @@ export default function AddRecommendationPage() {
 
   if (!user) {
     return (
-      <div className="corkboard min-h-screen flex items-start justify-center px-4 py-16">
+      <div className="corkboard cat-bg-add min-h-screen flex items-start justify-center px-4 py-16">
         <div className="sticky-note note-pink w-full max-w-3xl p-10 text-center mt-6">
           <h1
             className="text-3xl font-extrabold"
@@ -42,7 +42,7 @@ export default function AddRecommendationPage() {
   }
 
   return (
-    <div className="corkboard min-h-screen px-4 py-16">
+    <div className="corkboard cat-bg-add min-h-screen px-4 py-16">
       <div className="mx-auto max-w-3xl">
         {/* Header note */}
         <div className="sticky-note note-mint p-8 mb-10 mt-6">

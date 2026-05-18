@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="corkboard min-h-screen flex items-center justify-center px-4 py-16"
+      className="corkboard cat-bg-login min-h-screen flex items-center justify-center px-4 py-16"
     >
       {/* Big sticky note card */}
       <div
