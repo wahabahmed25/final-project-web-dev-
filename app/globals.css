@@ -247,10 +247,11 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-coffee {
   background-color: #1c1008 !important;
   background-image:
-    radial-gradient(ellipse at 30% 35%, rgba(200,120,40,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse at 72% 68%, rgba(160,90,30,0.18) 0%, transparent 50%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 30% 35%, rgba(200,120,40,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 72% 68%, rgba(160,90,30,0.22) 0%, transparent 50%),
+    url('/bg/coffee.svg') !important;
+  background-size: auto, auto, 240px 240px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
 }
 .cat-bg-study-spots {
   background-color: #edf3fb !important;
@@ -261,10 +262,11 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-study-spots {
   background-color: #060e1c !important;
   background-image:
-    radial-gradient(ellipse at 25% 30%, rgba(59,130,246,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 70%, rgba(37,99,235,0.18) 0%, transparent 50%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 25% 30%, rgba(59,130,246,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 70%, rgba(37,99,235,0.22) 0%, transparent 50%),
+    url('/bg/study-spots.svg') !important;
+  background-size: auto, auto, 240px 240px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
 }
 .cat-bg-bookstores {
   background-color: #1a0a02 !important;
@@ -282,10 +284,11 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-school-resources {
   background-color: #06090e !important;
   background-image:
-    radial-gradient(ellipse at 28% 40%, rgba(99,102,241,0.20) 0%, transparent 52%),
-    radial-gradient(ellipse at 70% 65%, rgba(79,70,229,0.16) 0%, transparent 48%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 28% 40%, rgba(99,102,241,0.26) 0%, transparent 52%),
+    radial-gradient(ellipse at 70% 65%, rgba(79,70,229,0.20) 0%, transparent 48%),
+    url('/bg/school-resources.svg') !important;
+  background-size: auto, auto, 240px 240px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
 }
 .cat-bg-food {
   background-color: #fff6e8 !important;
@@ -296,10 +299,11 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-food {
   background-color: #1a0e04 !important;
   background-image:
-    radial-gradient(ellipse at 32% 38%, rgba(234,88,12,0.20) 0%, transparent 52%),
-    radial-gradient(ellipse at 68% 66%, rgba(180,70,10,0.16) 0%, transparent 48%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 32% 38%, rgba(234,88,12,0.26) 0%, transparent 52%),
+    radial-gradient(ellipse at 68% 66%, rgba(180,70,10,0.20) 0%, transparent 48%),
+    url('/bg/food.svg') !important;
+  background-size: auto, auto, 240px 240px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
 }
 .cat-bg-recommendations {
   background-color: #f5f0e6 !important;
@@ -310,10 +314,11 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-recommendations {
   background-color: var(--bg-primary) !important;
   background-image:
-    radial-gradient(ellipse at 22% 22%, rgba(208,144,255,0.22) 0%, transparent 50%),
-    radial-gradient(ellipse at 78% 72%, rgba(168,85,247,0.26) 0%, transparent 50%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 22% 22%, rgba(208,144,255,0.26) 0%, transparent 50%),
+    radial-gradient(ellipse at 78% 72%, rgba(168,85,247,0.30) 0%, transparent 50%),
+    url('/bg/recommendations.svg') !important;
+  background-size: auto, auto, 200px 200px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
 }
 
 /* login page */
@@ -326,11 +331,12 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-login {
   background-color: #07050f !important;
   background-image:
-    radial-gradient(ellipse at 25% 28%, rgba(139,92,246,0.30) 0%, transparent 52%),
-    radial-gradient(ellipse at 74% 68%, rgba(109,40,217,0.24) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 10%, rgba(192,132,252,0.18) 0%, transparent 40%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 25% 28%, rgba(139,92,246,0.32) 0%, transparent 52%),
+    radial-gradient(ellipse at 74% 68%, rgba(109,40,217,0.26) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 10%, rgba(192,132,252,0.20) 0%, transparent 40%),
+    url('/bg/login.svg') !important;
+  background-size: auto, auto, auto, 200px 200px !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat !important;
 }
 
 /* add-recommendation page */
@@ -343,11 +349,12 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-add {
   background-color: #030b04 !important;
   background-image:
-    radial-gradient(ellipse at 28% 32%, rgba(34,197,94,0.22) 0%, transparent 54%),
-    radial-gradient(ellipse at 70% 65%, rgba(16,185,129,0.18) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 88%, rgba(74,222,128,0.12) 0%, transparent 40%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 28% 32%, rgba(34,197,94,0.26) 0%, transparent 54%),
+    radial-gradient(ellipse at 70% 65%, rgba(16,185,129,0.20) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 88%, rgba(74,222,128,0.14) 0%, transparent 40%),
+    url('/bg/add.svg') !important;
+  background-size: auto, auto, auto, 240px 240px !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat !important;
 }
 
 /* recommendation detail page */
@@ -360,11 +367,12 @@ button, input, textarea, select { font: inherit; }
 .dark .cat-bg-detail {
   background-color: #0f0a03 !important;
   background-image:
-    radial-gradient(ellipse at 30% 35%, rgba(217,119,6,0.22) 0%, transparent 54%),
-    radial-gradient(ellipse at 72% 66%, rgba(180,83,9,0.18) 0%, transparent 50%),
-    radial-gradient(ellipse at 15% 80%, rgba(251,191,36,0.12) 0%, transparent 42%) !important;
-  background-size: auto !important;
-  background-repeat: no-repeat !important;
+    radial-gradient(ellipse at 30% 35%, rgba(217,119,6,0.26) 0%, transparent 54%),
+    radial-gradient(ellipse at 72% 66%, rgba(180,83,9,0.20) 0%, transparent 50%),
+    radial-gradient(ellipse at 15% 80%, rgba(251,191,36,0.14) 0%, transparent 42%),
+    url('/bg/detail.svg') !important;
+  background-size: auto, auto, auto, 240px 240px !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat !important;
 }
 
 /* ── Purple CTA Button ──────────────────────────────────────────────── */
