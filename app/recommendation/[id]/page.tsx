@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { getRecommendationById, upvoteRecommendation, downvoteRecommendation } from "@/lib/recommendation";
 import { getCategoryLabel } from "@/data/categories";
 import type { Recommendation } from "@/types/recommendation";
+import VoteEffect from "@/components/VoteEffect";
 
 export default function RecommendationDetailPage() {
   const params = useParams();
@@ -17,7 +18,12 @@ export default function RecommendationDetailPage() {
   const [loading, setLoading] = useState(true);
   const [upvoting, setUpvoting] = useState(false);
   const [downvoting, setDownvoting] = useState(false);
+  const [upvoteAnim, setUpvoteAnim] = useState(false);
+  const [downvoteAnim, setDownvoteAnim] = useState(false);
   const [error, setError] = useState("");
+
+  const clearUpvoteAnim = useCallback(() => setUpvoteAnim(false), []);
+  const clearDownvoteAnim = useCallback(() => setDownvoteAnim(false), []);
 
   useEffect(() => {
     async function loadRecommendation() {
@@ -42,6 +48,7 @@ export default function RecommendationDetailPage() {
       setUpvoting(true);
       await upvoteRecommendation(recommendation.id);
       setRecommendation({ ...recommendation, upvotes: recommendation.upvotes + 1 });
+      setUpvoteAnim(true);
     } catch (err) {
       console.error(err);
       setError("Could not upvote right now.");
@@ -56,6 +63,7 @@ export default function RecommendationDetailPage() {
       setDownvoting(true);
       await downvoteRecommendation(recommendation.id);
       setRecommendation({ ...recommendation, downvotes: (recommendation.downvotes ?? 0) + 1 });
+      setDownvoteAnim(true);
     } catch (err) {
       console.error(err);
       setError("Could not downvote right now.");
@@ -195,21 +203,27 @@ export default function RecommendationDetailPage() {
             >
               {user ? (
                 <>
-                  <button
-                    onClick={handleUpvote}
-                    disabled={upvoting}
-                    className="btn-purple glow-sm"
-                  >
-                    {upvoting ? "..." : `👍 Upvote (${recommendation.upvotes})`}
-                  </button>
-                  <button
-                    onClick={handleDownvote}
-                    disabled={downvoting}
-                    className="btn-outline"
-                    style={{ borderColor: "#f43f5e", color: "#f43f5e" }}
-                  >
-                    {downvoting ? "..." : `👎 Downvote (${recommendation.downvotes ?? 0})`}
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={handleUpvote}
+                      disabled={upvoting}
+                      className="btn-purple glow-sm"
+                    >
+                      {upvoting ? "..." : `👍 Upvote (${recommendation.upvotes})`}
+                    </button>
+                    <VoteEffect type="up" active={upvoteAnim} onDone={clearUpvoteAnim} />
+                  </div>
+                  <div className="relative">
+                    <button
+                      onClick={handleDownvote}
+                      disabled={downvoting}
+                      className="btn-outline"
+                      style={{ borderColor: "#f43f5e", color: "#f43f5e" }}
+                    >
+                      {downvoting ? "..." : `👎 Downvote (${recommendation.downvotes ?? 0})`}
+                    </button>
+                    <VoteEffect type="down" active={downvoteAnim} onDone={clearDownvoteAnim} />
+                  </div>
                 </>
               ) : (
                 <Link href="/login" className="btn-purple glow-sm">
