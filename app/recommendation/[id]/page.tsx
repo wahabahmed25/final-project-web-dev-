@@ -6,7 +6,6 @@ import { useParams, notFound } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { getRecommendationById, upvoteRecommendation } from "@/lib/recommendation";
 import { getCategoryLabel } from "@/data/categories";
-
 import type { Recommendation } from "@/types/recommendation";
 
 export default function RecommendationDetailPage() {
@@ -14,9 +13,7 @@ export default function RecommendationDetailPage() {
   const id = String(params.id);
   const { user } = useAuth();
 
-  const [recommendation, setRecommendation] = useState<Recommendation | null>(
-    null
-  );
+  const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [loading, setLoading] = useState(true);
   const [upvoting, setUpvoting] = useState(false);
   const [error, setError] = useState("");
@@ -26,11 +23,7 @@ export default function RecommendationDetailPage() {
       try {
         setLoading(true);
         const data = await getRecommendationById(id);
-
-        if (!data) {
-          notFound();
-        }
-
+        if (!data) notFound();
         setRecommendation(data);
       } catch (err) {
         console.error(err);
@@ -39,21 +32,15 @@ export default function RecommendationDetailPage() {
         setLoading(false);
       }
     }
-
     loadRecommendation();
   }, [id]);
 
   async function handleUpvote() {
     if (!recommendation) return;
-
     try {
       setUpvoting(true);
       await upvoteRecommendation(recommendation.id);
-
-      setRecommendation({
-        ...recommendation,
-        upvotes: recommendation.upvotes + 1,
-      });
+      setRecommendation({ ...recommendation, upvotes: recommendation.upvotes + 1 });
     } catch (err) {
       console.error(err);
       setError("Could not upvote right now.");
@@ -64,88 +51,121 @@ export default function RecommendationDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <section className="mx-auto max-w-3xl px-4 py-12">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-600">
+      <div className="corkboard min-h-screen px-4 py-12">
+        <div className="mx-auto max-w-3xl mt-6">
+          <div
+            className="sticky-note note-yellow p-6 text-sm"
+            style={{ color: "var(--fg-secondary)" }}
+          >
             Loading recommendation...
           </div>
-        </section>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <section className="mx-auto max-w-3xl px-4 py-12">
-          <div className="rounded-2xl bg-red-50 p-6 text-red-700">{error}</div>
-        </section>
+      <div className="corkboard min-h-screen px-4 py-12">
+        <div className="mx-auto max-w-3xl mt-6">
+          <div
+            className="sticky-note note-pink p-6 text-sm"
+            style={{ color: "var(--fg-primary)" }}
+          >
+            {error}
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (!recommendation) {
-    return null;
-  }
+  if (!recommendation) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="mx-auto max-w-3xl px-4 py-12">
+    <div className="corkboard min-h-screen px-4 py-12">
+      <div className="mx-auto max-w-3xl">
         <Link
           href="/recommendations"
-          className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+          className="text-sm font-bold transition-colors hover:text-[var(--purple)]"
+          style={{ color: "var(--fg-secondary)" }}
         >
           ← Back to recommendations
         </Link>
 
-        <article className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        {/* Main detail sticky note */}
+        <article className="sticky-note note-lavender mt-10 p-8">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+              <p
+                className="text-xs font-bold uppercase tracking-widest"
+                style={{ color: "var(--purple)" }}
+              >
                 {getCategoryLabel(recommendation.category)}
               </p>
-
-              <h1 className="mt-2 text-3xl font-bold text-slate-950">
+              <h1
+                className="mt-2 text-3xl font-extrabold"
+                style={{ color: "var(--fg-primary)" }}
+              >
                 {recommendation.title}
               </h1>
-
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-xs" style={{ color: "var(--fg-muted)" }}>
                 Posted by {recommendation.createdByName}
               </p>
             </div>
 
-            <div className="rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-800">
+            <div
+              className="shrink-0 rounded-full px-4 py-2 text-sm font-bold"
+              style={{
+                background: "var(--note-yellow)",
+                color: "var(--fg-primary)",
+              }}
+            >
               ⭐ {recommendation.rating}/5
             </div>
           </div>
 
           <div className="mt-8 grid gap-6">
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              <h2
+                className="text-xs font-bold uppercase tracking-widest mb-2"
+                style={{ color: "var(--fg-muted)" }}
+              >
                 Description
               </h2>
-              <p className="mt-2 leading-7 text-slate-700">
+              <p className="leading-7 text-sm" style={{ color: "var(--fg-secondary)" }}>
                 {recommendation.description}
               </p>
             </div>
 
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              <h2
+                className="text-xs font-bold uppercase tracking-widest mb-2"
+                style={{ color: "var(--fg-muted)" }}
+              >
                 Location
               </h2>
-              <p className="mt-2 text-slate-700">📍 {recommendation.location}</p>
+              <p className="text-sm" style={{ color: "var(--fg-secondary)" }}>
+                📍 {recommendation.location}
+              </p>
             </div>
 
             {recommendation.tags.length > 0 && (
               <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                <h2
+                  className="text-xs font-bold uppercase tracking-widest mb-2"
+                  style={{ color: "var(--fg-muted)" }}
+                >
                   Tags
                 </h2>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                   {recommendation.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600"
+                      className="rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{
+                        background: "var(--purple-light)",
+                        color: "var(--purple)",
+                      }}
                     >
                       #{tag}
                     </span>
@@ -154,29 +174,29 @@ export default function RecommendationDetailPage() {
               </div>
             )}
 
-            <div className="border-t border-slate-200 pt-6">
+            <div
+              className="border-t pt-6"
+              style={{ borderColor: "var(--border)" }}
+            >
               {user ? (
                 <button
                   onClick={handleUpvote}
                   disabled={upvoting}
-                  className="rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:bg-slate-400"
+                  className="btn-purple glow-sm"
                 >
-                  {upvoting
-                    ? "Upvoting..."
-                    : `Upvote (${recommendation.upvotes})`}
+                  {upvoting ? "Upvoting..." : `Upvote (${recommendation.upvotes})`}
                 </button>
               ) : (
-                <Link
-                  href="/login"
-                  className="inline-flex rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-                >
+                <Link href="/login" className="btn-purple glow-sm">
                   Login to upvote
                 </Link>
               )}
             </div>
           </div>
         </article>
-      </section>
+
+        <div className="pb-16" />
+      </div>
     </div>
   );
 }

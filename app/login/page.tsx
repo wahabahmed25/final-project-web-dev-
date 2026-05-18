@@ -13,53 +13,97 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="mx-auto flex max-w-md px-4 py-16">
-        <div className="w-full rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Student Access
-          </p>
+    <div
+      className="corkboard min-h-screen flex items-center justify-center px-4 py-16"
+    >
+      {/* Big sticky note card */}
+      <div
+        className="sticky-note note-lavender w-full max-w-md p-10 text-center mt-6"
+        style={{ borderRadius: "4px" }}
+      >
+        {/* Pin dot */}
+        <div
+          className="absolute -top-4 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full z-10 glow-md"
+          style={{
+            background: "var(--purple)",
+            boxShadow: "var(--glow-md)",
+            marginTop: "2px",
+          }}
+        />
 
-          <h1 className="mt-2 text-3xl font-bold text-slate-950">
-            Login to Hunter Recommendations Hub
-          </h1>
+        <span
+          className="inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4"
+          style={{
+            background: "var(--purple-light)",
+            color: "var(--purple)",
+          }}
+        >
+          Student Access
+        </span>
 
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            Log in with Google to add recommendations and upvote helpful
-            suggestions.
-          </p>
+        <h1
+          className="text-3xl font-bold leading-tight mb-3"
+          style={{ color: "var(--fg-primary)" }}
+        >
+          Login to Hunter Recommendations Hub
+        </h1>
 
-          {loading ? (
-            <div className="mt-8 rounded-2xl bg-slate-100 px-5 py-3 text-sm text-slate-600">
-              Loading...
-            </div>
-          ) : user ? (
-            <div className="mt-8">
-              <div className="rounded-2xl bg-green-50 px-5 py-4 text-sm text-green-700">
-                You are logged in as{" "}
-                <span className="font-semibold">
-                  {user.displayName || user.email}
-                </span>
-                .
-              </div>
+        <p
+          className="text-sm leading-7"
+          style={{ color: "var(--fg-secondary)" }}
+        >
+          Sign in with Google to add recommendations and upvote helpful
+          suggestions from other students.
+        </p>
 
-              <button
-                onClick={logout}
-                className="mt-4 w-full rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleLogin}
-              className="mt-8 w-full rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+        {loading ? (
+          <div
+            className="mt-8 rounded-2xl px-5 py-3 text-sm"
+            style={{
+              background: "var(--bg-secondary)",
+              color: "var(--fg-muted)",
+            }}
+          >
+            Loading...
+          </div>
+        ) : user ? (
+          <div className="mt-8 flex flex-col gap-4">
+            <div
+              className="rounded-2xl px-5 py-4 text-sm"
+              style={{
+                background: "var(--note-mint)",
+                color: "var(--fg-primary)",
+                border: "1px solid var(--border-hover)",
+              }}
             >
-              Continue with Google
+              Signed in as{" "}
+              <span className="font-bold">
+                {user.displayName || user.email}
+              </span>
+            </div>
+            <button onClick={logout} className="btn-outline w-full">
+              Sign Out
             </button>
-          )}
+          </div>
+        ) : (
+          <button
+            onClick={handleLogin}
+            className="btn-purple mt-8 w-full glow-sm"
+          >
+            Continue with Google
+          </button>
+        )}
+
+        {/* Decorative doodle lines */}
+        <div
+          className="mt-8 flex items-center gap-2"
+          style={{ color: "var(--fg-muted)" }}
+        >
+          <div className="flex-1 border-t" style={{ borderColor: "var(--border)" }} />
+          <span className="text-xs">Hunter College</span>
+          <div className="flex-1 border-t" style={{ borderColor: "var(--border)" }} />
         </div>
-      </section>
+      </div>
     </div>
   );
 }

@@ -4,80 +4,102 @@ import { categories } from "@/data/categories";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-4 inline-flex rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-            Built for Hunter students
-          </p>
-
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-6xl">
-            Find trusted recommendations near Hunter faster.
-          </h1>
-
-          <p className="mt-6 text-lg leading-8 text-slate-600">
-            Browse student-friendly suggestions for study spots, food, coffee,
-            bookstores, school resources, and more. No endless scrolling. Just
-            clear recommendations in one place.
-          </p>
-
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link
-              href="/recommendations"
-              className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+    <div className="corkboard min-h-screen">
+      {/* ── Hero notice ───────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-4 pt-20 pb-8">
+        <div className="mx-auto max-w-2xl">
+          {/* Big center sticky note for hero */}
+          <div
+            className="sticky-note note-yellow text-center px-10 py-12 mx-auto"
+            style={{ maxWidth: "600px" }}
+          >
+            <span
+              className="inline-block rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest mb-5"
+              style={{
+                background: "var(--purple-light)",
+                color: "var(--purple)",
+              }}
             >
-              Browse Recommendations
-            </Link>
+              Built for Hunter students
+            </span>
 
-            <Link
-              href="/add-recommendation"
-              className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-100"
+            <h1
+              className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl text-glow"
+              style={{ color: "var(--fg-primary)" }}
             >
-              Add a Recommendation
-            </Link>
+              Find trusted spots near Hunter — fast.
+            </h1>
+
+            <p
+              className="mt-5 text-base leading-7"
+              style={{ color: "var(--fg-secondary)" }}
+            >
+              Student-curated suggestions for study spots, food, coffee,
+              bookstores, and more. No endless scrolling. Just clear
+              recommendations in one place.
+            </p>
+
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link href="/recommendations" className="btn-purple glow-sm">
+                Browse Recommendations
+              </Link>
+              <Link href="/add-recommendation" className="btn-outline">
+                Add a Recommendation
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* ── Category sticky notes ───────────────────── */}
+        <div className="sticky-grid mt-20 grid gap-8 pt-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
             <CategoryCard key={category.value} category={category} />
           ))}
         </div>
 
-        <div className="mt-16 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div>
-              <p className="text-3xl font-bold text-blue-600">01</p>
-              <h3 className="mt-3 font-semibold text-slate-950">
-                Pick a category
+        {/* ── How it works ────────────────────────────── */}
+        <div className="sticky-grid mt-20 grid gap-8 pt-6 md:grid-cols-3">
+          {[
+            {
+              num: "01",
+              title: "Pick a category",
+              desc: "Study spots, food, coffee, bookstores, or school resources.",
+            },
+            {
+              num: "02",
+              title: "Compare options",
+              desc: "Read short descriptions, ratings, tags, and locations.",
+            },
+            {
+              num: "03",
+              title: "Share your own",
+              desc: "Log in and add useful recommendations for other students.",
+            },
+          ].map(({ num, title, desc }) => (
+            <div key={num} className="sticky-note p-8 text-center">
+              <p
+                className="text-4xl font-black text-glow"
+                style={{ color: "var(--purple)" }}
+              >
+                {num}
+              </p>
+              <h3
+                className="mt-3 text-base font-bold"
+                style={{ color: "var(--fg-primary)" }}
+              >
+                {title}
               </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Choose study spots, food, coffee, bookstores, or school
-                resources.
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: "var(--fg-secondary)" }}
+              >
+                {desc}
               </p>
             </div>
-
-            <div>
-              <p className="text-3xl font-bold text-blue-600">02</p>
-              <h3 className="mt-3 font-semibold text-slate-950">
-                Compare options
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Read short descriptions, ratings, tags, and locations.
-              </p>
-            </div>
-
-            <div>
-              <p className="text-3xl font-bold text-blue-600">03</p>
-              <h3 className="mt-3 font-semibold text-slate-950">
-                Share your own
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Log in and add useful recommendations for other students.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
+
+        <div className="pb-20" />
       </section>
     </div>
   );

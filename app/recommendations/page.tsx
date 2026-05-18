@@ -27,98 +27,110 @@ export default function RecommendationsPage() {
         setLoading(false);
       }
     }
-
     loadRecommendations();
   }, []);
 
   const filteredRecommendations = useMemo(() => {
     const term = search.toLowerCase().trim();
-
-    if (!term) {
-      return recommendations;
-    }
-
-    return recommendations.filter((item) => {
-      const searchableText = [
-        item.title,
-        item.description,
-        item.location,
-        item.category,
-        ...item.tags,
-      ]
+    if (!term) return recommendations;
+    return recommendations.filter((item) =>
+      [item.title, item.description, item.location, item.category, ...item.tags]
         .join(" ")
-        .toLowerCase();
-
-      return searchableText.includes(term);
-    });
+        .toLowerCase()
+        .includes(term)
+    );
   }, [recommendations, search]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="corkboard min-h-screen">
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        {/* Header note */}
+        <div
+          className="sticky-note note-pink p-8 mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between mt-6"
+        >
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+            <p
+              className="text-xs font-bold uppercase tracking-widest mb-2"
+              style={{ color: "var(--purple)" }}
+            >
               Browse
             </p>
-            <h1 className="mt-2 text-4xl font-bold text-slate-950">
+            <h1
+              className="text-4xl font-extrabold"
+              style={{ color: "var(--fg-primary)" }}
+            >
               All Recommendations
             </h1>
-            <p className="mt-3 max-w-2xl text-slate-600">
+            <p
+              className="mt-2 max-w-xl text-sm leading-6"
+              style={{ color: "var(--fg-secondary)" }}
+            >
               Search student recommendations for useful places and resources on
               or near Hunter.
             </p>
           </div>
-
-          <Link
-            href="/add-recommendation"
-            className="rounded-full bg-blue-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            Add Recommendation
+          <Link href="/add-recommendation" className="btn-purple shrink-0 glow-sm">
+            + Add Recommendation
           </Link>
         </div>
 
-        <div className="mt-8">
+        {/* Search */}
+        <div className="mb-6">
           <SearchInput value={search} onChange={setSearch} />
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        {/* Category pills */}
+        <div className="flex flex-wrap gap-2 mb-8">
           {categories.map((category) => (
             <Link
               key={category.value}
               href={`/recommendations/${category.value}`}
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:text-blue-600"
+              className="sticky-note rounded-full px-4 py-2 text-xs font-bold transition-all"
+              style={{ color: "var(--fg-secondary)" }}
             >
               {category.label}
             </Link>
           ))}
         </div>
 
+        {/* States */}
         {loading && (
-          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 text-slate-600">
+          <div
+            className="sticky-note note-yellow p-6 text-sm mt-6"
+            style={{ color: "var(--fg-secondary)" }}
+          >
             Loading recommendations...
           </div>
         )}
 
         {error && (
-          <div className="mt-10 rounded-2xl bg-red-50 p-6 text-red-700">
+          <div
+            className="sticky-note mt-6 p-6 text-sm"
+            style={{
+              background: "var(--note-pink)",
+              color: "var(--fg-primary)",
+            }}
+          >
             {error}
           </div>
         )}
 
         {!loading && !error && filteredRecommendations.length === 0 && (
-          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 text-center">
-            <h2 className="text-lg font-semibold text-slate-950">
+          <div className="sticky-note note-lavender mt-6 p-10 text-center">
+            <h2
+              className="text-lg font-bold"
+              style={{ color: "var(--fg-primary)" }}
+            >
               No recommendations found
             </h2>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm" style={{ color: "var(--fg-secondary)" }}>
               Try a different search or add the first recommendation.
             </p>
           </div>
         )}
 
         {!loading && !error && filteredRecommendations.length > 0 && (
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="sticky-grid mt-10 grid gap-8 pt-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredRecommendations.map((recommendation) => (
               <RecommendationCard
                 key={recommendation.id}
@@ -127,6 +139,8 @@ export default function RecommendationsPage() {
             ))}
           </div>
         )}
+
+        <div className="pb-16" />
       </section>
     </div>
   );

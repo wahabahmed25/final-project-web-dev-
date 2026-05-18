@@ -12,8 +12,7 @@ export default function RecommendationForm() {
   const { user } = useAuth();
 
   const [title, setTitle] = useState("");
-  const [category, setCategory] =
-    useState<RecommendationCategory>("study-spots");
+  const [category, setCategory] = useState<RecommendationCategory>("study-spots");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [rating, setRating] = useState("5");
@@ -44,7 +43,6 @@ export default function RecommendationForm() {
 
     try {
       setIsSubmitting(true);
-
       await addRecommendation({
         title,
         category,
@@ -58,7 +56,6 @@ export default function RecommendationForm() {
         createdBy: user.uid,
         createdByName: user.displayName || user.email || "Student",
       });
-
       router.push("/recommendations");
     } catch (err) {
       console.error(err);
@@ -71,38 +68,79 @@ export default function RecommendationForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+      className="sticky-note note-lavender p-8"
     >
       {error && (
-        <div className="mb-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <div
+          className="mb-6 rounded-2xl px-4 py-3 text-sm font-semibold"
+          style={{
+            background: "var(--note-pink)",
+            color: "var(--fg-primary)",
+            border: "1.5px solid var(--border-hover)",
+          }}
+        >
           {error}
         </div>
       )}
 
       <div className="grid gap-5">
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Recommendation Name
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="Example: Hunter Library 3rd Floor"
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-          />
-        </div>
+        {[
+          {
+            label: "Recommendation Name",
+            type: "text" as const,
+            value: title,
+            onChange: setTitle,
+            placeholder: "Example: Hunter Library 3rd Floor",
+          },
+          {
+            label: "Location",
+            type: "text" as const,
+            value: location,
+            onChange: setLocation,
+            placeholder: "Example: Hunter East, 3rd Floor",
+          },
+          {
+            label: "Tags",
+            type: "text" as const,
+            value: tags,
+            onChange: setTags,
+            placeholder: "Example: quiet, wifi, cheap, on-campus",
+            hint: "Separate tags with commas.",
+          },
+        ].map(({ label, type, value, onChange, placeholder, hint }) => (
+          <div key={label}>
+            <label
+              className="mb-2 block text-sm font-bold"
+              style={{ color: "var(--fg-primary)" }}
+            >
+              {label}
+            </label>
+            <input
+              type={type}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={placeholder}
+              className="themed-input"
+            />
+            {hint && (
+              <p className="mt-1.5 text-xs" style={{ color: "var(--fg-muted)" }}>
+                {hint}
+              </p>
+            )}
+          </div>
+        ))}
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label
+            className="mb-2 block text-sm font-bold"
+            style={{ color: "var(--fg-primary)" }}
+          >
             Category
           </label>
           <select
             value={category}
-            onChange={(event) =>
-              setCategory(event.target.value as RecommendationCategory)
-            }
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            onChange={(e) => setCategory(e.target.value as RecommendationCategory)}
+            className="themed-input"
           >
             {categories.map((item) => (
               <option key={item.value} value={item.value}>
@@ -113,68 +151,45 @@ export default function RecommendationForm() {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label
+            className="mb-2 block text-sm font-bold"
+            style={{ color: "var(--fg-primary)" }}
+          >
             Description
           </label>
           <textarea
             value={description}
-            onChange={(event) => setDescription(event.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             placeholder="Write a short useful description for other students."
             rows={5}
-            className="w-full resize-none rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            className="themed-input resize-none"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Location
-          </label>
-          <input
-            type="text"
-            value={location}
-            onChange={(event) => setLocation(event.target.value)}
-            placeholder="Example: Hunter East, 3rd Floor"
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label
+            className="mb-2 block text-sm font-bold"
+            style={{ color: "var(--fg-primary)" }}
+          >
             Rating
           </label>
           <select
             value={rating}
-            onChange={(event) => setRating(event.target.value)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            onChange={(e) => setRating(e.target.value)}
+            className="themed-input"
           >
-            <option value="5">5 - Excellent</option>
-            <option value="4">4 - Good</option>
-            <option value="3">3 - Okay</option>
-            <option value="2">2 - Not great</option>
-            <option value="1">1 - Poor</option>
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Good</option>
+            <option value="3">3 — Okay</option>
+            <option value="2">2 — Not great</option>
+            <option value="1">1 — Poor</option>
           </select>
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Tags
-          </label>
-          <input
-            type="text"
-            value={tags}
-            onChange={(event) => setTags(event.target.value)}
-            placeholder="Example: quiet, wifi, cheap, on-campus"
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-          />
-          <p className="mt-2 text-xs text-slate-500">
-            Separate tags with commas.
-          </p>
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+          className="btn-purple w-full glow-sm"
         >
           {isSubmitting ? "Saving..." : "Submit Recommendation"}
         </button>
