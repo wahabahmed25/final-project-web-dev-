@@ -1,10 +1,12 @@
 import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
+import PinStringWeb from "@/components/PinStringWeb";
 import { categories } from "@/data/categories";
 
 export default function HomePage() {
   return (
     <div className="corkboard min-h-screen">
+      <PinStringWeb />
       {/* ── Hero notice ───────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-4 pt-20 pb-8">
         <div className="flex justify-center">

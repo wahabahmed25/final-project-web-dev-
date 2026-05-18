@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <!-- Book spine tile for top shelf -->
+    <pattern id="topBooks" x="0" y="0" width="198" height="130" patternUnits="userSpaceOnUse">
+      <rect x="0"   y="32"  width="24" height="98"  fill="#7a1a1a"/>
+      <rect x="24"  y="48"  width="19" height="82"  fill="#1a3452"/>
+      <rect x="43"  y="20"  width="28" height="110" fill="#2a5c1a"/>
+      <rect x="71"  y="38"  width="21" height="92"  fill="#6b4c11"/>
+      <rect x="92"  y="15"  width="30" height="115" fill="#3a1a5c"/>
+      <rect x="122" y="42"  width="17" height="88"  fill="#1a4a3a"/>
+      <rect x="139" y="25"  width="26" height="105" fill="#8b4519"/>
+      <rect x="165" y="50"  width="14" height="80"  fill="#3d3d1a"/>
+      <rect x="179" y="30"  width="19" height="100" fill="#5c1a1a"/>
+      <!-- Thin highlight lines on some books -->
+      <line x1="0"  y1="50"  x2="24"  y2="50"  stroke="rgba(255,200,150,0.18)" stroke-width="1"/>
+      <line x1="43" y1="55"  x2="71"  y2="55"  stroke="rgba(255,200,150,0.15)" stroke-width="1"/>
+      <line x1="92" y1="60"  x2="122" y2="60"  stroke="rgba(255,200,150,0.15)" stroke-width="1"/>
+      <line x1="139" y1="52" x2="165" y2="52"  stroke="rgba(255,200,150,0.12)" stroke-width="1"/>
+    </pattern>
+    <!-- Book spine tile for bottom shelf -->
+    <pattern id="botBooks" x="0" y="0" width="198" height="130" patternUnits="userSpaceOnUse">
+      <rect x="0"   y="0"   width="22" height="95"  fill="#1a3a52"/>
+      <rect x="22"  y="0"   width="30" height="112" fill="#5c2a1a"/>
+      <rect x="52"  y="0"   width="18" height="88"  fill="#1a4a2a"/>
+      <rect x="70"  y="0"   width="26" height="106" fill="#4a1a4a"/>
+      <rect x="96"  y="0"   width="20" height="92"  fill="#7a4a1a"/>
+      <rect x="116" y="0"   width="28" height="115" fill="#1a4a4a"/>
+      <rect x="144" y="0"   width="16" height="84"  fill="#8b1a1a"/>
+      <rect x="160" y="0"   width="24" height="100" fill="#2a4a1a"/>
+      <rect x="184" y="0"   width="14" height="90"  fill="#3a2a5c"/>
+      <!-- Highlights -->
+      <line x1="22"  y1="30" x2="52"  y2="30" stroke="rgba(255,200,150,0.18)" stroke-width="1"/>
+      <line x1="70"  y1="40" x2="96"  y2="40" stroke="rgba(255,200,150,0.15)" stroke-width="1"/>
+      <line x1="116" y1="35" x2="144" y2="35" stroke="rgba(255,200,150,0.15)" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="warmGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#7c3d10" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#1a0a02" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Dark library background -->
+  <rect width="1200" height="800" fill="#1a0a02"/>
+
+  <!-- Ceiling dark zone -->
+  <rect width="1200" height="150" fill="#120602"/>
+  <!-- Floor dark zone -->
+  <rect y="650" width="1200" height="150" fill="#120602"/>
+
+  <!-- Top bookshelf books -->
+  <rect width="1200" height="135" y="15" fill="url(#topBooks)"/>
+  <!-- Top shelf board -->
+  <rect y="148" width="1200" height="16" fill="#4a2c10" rx="2"/>
+  <rect y="148" width="1200" height="3" fill="#6b4020"/>
+
+  <!-- Warm central glow -->
+  <rect width="1200" height="800" fill="url(#warmGlow)"/>
+
+  <!-- Faint floor boards lines in middle section -->
+  <line x1="0" y1="480" x2="1200" y2="480" stroke="#3a2010" stroke-width="1" opacity="0.5"/>
+  <line x1="0" y1="520" x2="1200" y2="520" stroke="#3a2010" stroke-width="1" opacity="0.4"/>
+  <line x1="0" y1="560" x2="1200" y2="560" stroke="#3a2010" stroke-width="1" opacity="0.35"/>
+
+  <!-- Bottom shelf board -->
+  <rect y="636" width="1200" height="16" fill="#4a2c10" rx="2"/>
+  <rect y="636" width="1200" height="3" fill="#6b4020"/>
+  <!-- Bottom bookshelf books -->
+  <rect width="1200" height="135" y="651" fill="url(#botBooks)"/>
+
+  <!-- Ambient side glow (lantern-like) -->
+  <radialGradient id="leftLamp" cx="0%" cy="42%" r="35%">
+    <stop offset="0%" stop-color="#c8782a" stop-opacity="0.14"/>
+    <stop offset="100%" stop-color="#1a0a02" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="rightLamp" cx="100%" cy="42%" r="35%">
+    <stop offset="0%" stop-color="#c8782a" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#1a0a02" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1200" height="800" fill="url(#leftLamp)"/>
+  <rect width="1200" height="800" fill="url(#rightLamp)"/>
+</svg>

@@ -197,12 +197,78 @@ button, input, textarea, select { font: inherit; }
 /* ── Navbar ─────────────────────────────────────────────────────────── */
 .nav-surface {
   background: var(--bg-primary);
-  border-bottom: 1.5px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  position: relative;
   transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
 }
+.nav-surface::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+    #9333ea 0%, #ec4899 18%, #f59e0b 36%, #22c55e 54%, #3b82f6 72%, #a855f7 90%, #9333ea 100%
+  );
+  opacity: 0.75;
+}
+.nav-surface::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(90deg,
+    var(--purple) 0, var(--purple) 8px,
+    transparent 8px, transparent 14px
+  );
+  opacity: 0.45;
+}
 .dark .nav-surface {
-  border-bottom-color: rgba(192, 132, 252, 0.26);
+  border-bottom-color: rgba(192, 132, 252, 0.3);
   box-shadow: 0 3px 28px rgba(147, 51, 234, 0.18);
+}
+.dark .nav-surface::before { opacity: 0.55; }
+
+/* ── Category Backgrounds ───────────────────────────────────────────── */
+.cat-bg-coffee {
+  background-color: #fef8ef !important;
+  background-image: url('/bg/coffee.svg') !important;
+  background-size: 240px 240px !important;
+  background-repeat: repeat !important;
+}
+.dark .cat-bg-coffee {
+  background-color: #1a1005 !important;
+  filter: brightness(0.6) saturate(0.8);
+}
+.cat-bg-study-spots {
+  background-color: #edf3fb !important;
+  background-image: url('/bg/study-spots.svg') !important;
+  background-size: 240px 240px !important;
+  background-repeat: repeat !important;
+}
+.dark .cat-bg-study-spots {
+  background-color: #080e18 !important;
+  filter: brightness(0.55) saturate(0.75);
+}
+.cat-bg-bookstores {
+  background-color: #1a0a02 !important;
+  background-image: url('/bg/bookstores.svg') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+.cat-bg-school-resources {
+  background-color: #f4f7fc !important;
+  background-image: url('/bg/school-resources.svg') !important;
+  background-size: 240px 240px !important;
+  background-repeat: repeat !important;
+}
+.dark .cat-bg-school-resources {
+  background-color: #080c14 !important;
+  filter: brightness(0.55) saturate(0.75);
+}
+.cat-bg-food {
+  background-color: #fff8f0 !important;
+  background-image: none !important;
 }
 
 /* ── Purple CTA Button ──────────────────────────────────────────────── */

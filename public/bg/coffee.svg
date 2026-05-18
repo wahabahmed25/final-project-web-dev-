@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <rect width="240" height="240" fill="#fef8ef"/>
+  <!-- Coffee cup -->
+  <g transform="translate(22, 38)" stroke="#7c4a1e" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 14 L2 54 Q2 62 10 62 L66 62 Q74 62 74 54 L72 14 Z" stroke-width="2.2"/>
+    <line x1="2" y1="14" x2="74" y2="14" stroke-width="2"/>
+    <path d="M74 22 Q90 22 90 38 Q90 54 74 54" stroke-width="2.2"/>
+    <ellipse cx="38" cy="66" rx="44" ry="7" stroke-width="1.6"/>
+    <ellipse cx="38" cy="14" rx="36" ry="6" fill="#d4825a" fill-opacity="0.28" stroke="none"/>
+    <path d="M18 10 Q21 1 18 -8" stroke-width="1.6"/>
+    <path d="M38 7 Q41 -2 38 -11" stroke-width="1.6"/>
+    <path d="M58 10 Q61 1 58 -8" stroke-width="1.6"/>
+  </g>
+  <!-- Bean top-right -->
+  <g transform="translate(172, 48) rotate(22)" stroke="#7c4a1e" fill="none" stroke-width="1.8">
+    <ellipse cx="0" cy="0" rx="10" ry="16"/>
+    <path d="M0,-16 C-5,-8 -5,8 0,16"/>
+    <path d="M0,-16 C5,-8 5,8 0,16"/>
+  </g>
+  <!-- Bean mid-right small -->
+  <g transform="translate(200, 115) rotate(-32)" stroke="#7c4a1e" fill="none" stroke-width="1.5">
+    <ellipse cx="0" cy="0" rx="7" ry="11"/>
+    <path d="M0,-11 C-3,-5.5 -3,5.5 0,11"/>
+    <path d="M0,-11 C3,-5.5 3,5.5 0,11"/>
+  </g>
+  <!-- Bean bottom-left -->
+  <g transform="translate(28, 190) rotate(12)" stroke="#7c4a1e" fill="none" stroke-width="1.6">
+    <ellipse cx="0" cy="0" rx="8" ry="13"/>
+    <path d="M0,-13 C-4,-6.5 -4,6.5 0,13"/>
+    <path d="M0,-13 C4,-6.5 4,6.5 0,13"/>
+  </g>
+  <!-- Ring stain -->
+  <circle cx="178" cy="194" r="26" fill="none" stroke="#c4784a" stroke-width="3" opacity="0.38"/>
+  <circle cx="178" cy="194" r="20" fill="none" stroke="#c4784a" stroke-width="1.2" opacity="0.2"/>
+  <!-- Dots -->
+  <circle cx="125" cy="22" r="4" fill="#a06030" opacity="0.26"/>
+  <circle cx="210" cy="72" r="3" fill="#a06030" opacity="0.20"/>
+  <circle cx="8" cy="145" r="3.5" fill="#a06030" opacity="0.22"/>
+  <circle cx="148" cy="218" r="3" fill="#a06030" opacity="0.22"/>
+</svg>

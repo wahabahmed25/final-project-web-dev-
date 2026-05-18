@@ -52,7 +52,7 @@ export default function CategoryRecommendationsPage() {
   }, [recommendations, search]);
 
   return (
-    <div className="corkboard min-h-screen">
+    <div className={`corkboard min-h-screen cat-bg-${category}`}>
       <section className="mx-auto max-w-6xl px-4 py-12">
         <Link
           href="/recommendations"
