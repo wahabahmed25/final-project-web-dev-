@@ -129,16 +129,20 @@ export default function RecommendationsPage() {
           </div>
         )}
 
-        {!loading && !error && filteredRecommendations.length > 0 && (
-          <div className="sticky-grid mt-10 grid gap-8 pt-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredRecommendations.map((recommendation) => (
-              <RecommendationCard
-                key={recommendation.id}
-                recommendation={recommendation}
-              />
-            ))}
-          </div>
-        )}
+        {!loading && !error && filteredRecommendations.length > 0 && (() => {
+          const maxUpvotes = recommendations.reduce((m, r) => Math.max(m, r.upvotes), 0);
+          return (
+            <div className="sticky-grid mt-10 grid gap-8 pt-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredRecommendations.map((recommendation) => (
+                <RecommendationCard
+                  key={recommendation.id}
+                  recommendation={recommendation}
+                  isTop={maxUpvotes > 0 && recommendation.upvotes === maxUpvotes}
+                />
+              ))}
+            </div>
+          );
+        })()}
 
         <div className="pb-16" />
       </section>

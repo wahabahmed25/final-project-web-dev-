@@ -4,14 +4,35 @@ import type { Recommendation } from "@/types/recommendation";
 
 export default function RecommendationCard({
   recommendation,
+  isTop = false,
 }: {
   recommendation: Recommendation;
+  isTop?: boolean;
 }) {
+  const isTorn = !isTop && recommendation.rating <= 2;
+
   return (
     <Link
       href={`/recommendation/${recommendation.id}`}
-      className="block sticky-note p-5"
+      className={`block sticky-note p-5 ${isTop ? "note-golden" : ""} ${isTorn ? "note-torn" : ""}`}
     >
+      {isTop && (
+        <div
+          className="absolute -top-3 -right-2 z-10 rounded-full px-2 py-0.5 text-xs font-bold shadow-md"
+          style={{ background: "#f59e0b", color: "#fff" }}
+        >
+          🏆 Top Pick
+        </div>
+      )}
+      {isTorn && (
+        <div
+          className="absolute -top-3 -right-2 z-10 rounded-full px-2 py-0.5 text-xs font-bold shadow-md"
+          style={{ background: "#f43f5e", color: "#fff" }}
+        >
+          😬 Rough
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <p
@@ -22,7 +43,7 @@ export default function RecommendationCard({
           </p>
 
           <h3
-            className="mt-1 text-lg font-bold"
+            className="mt-1 text-xl font-bold font-fun"
             style={{ color: "var(--fg-primary)" }}
           >
             {recommendation.title}
@@ -76,8 +97,8 @@ export default function RecommendationCard({
         }}
       >
         <span>By {recommendation.createdByName}</span>
-        <span style={{ color: "var(--purple)", fontWeight: 600 }}>
-          {recommendation.upvotes} upvotes
+        <span style={{ color: isTop ? "#f59e0b" : "var(--purple)", fontWeight: 600 }}>
+          {isTop ? "✨ " : ""}{recommendation.upvotes} upvotes
         </span>
       </div>
     </Link>

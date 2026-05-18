@@ -14,28 +14,20 @@ export default function Navbar() {
         {/* Logo sticker */}
         <Link href="/" className="flex items-center gap-2 group">
           <span
-            className="sticky-note note-lavender rounded-full px-4 py-1.5 text-sm font-bold tracking-tight transition-all"
+            className="sticky-note note-lavender rounded-full px-4 py-1.5 font-fun text-base font-bold tracking-tight transition-all"
             style={{ color: "var(--purple)" }}
           >
-            Hunter Hub
+            🏫 Hunter Hub
           </span>
         </Link>
 
         <div className="flex items-center gap-3 text-sm">
-          <Link
-            href="/recommendations"
-            className="font-semibold transition-colors hover:text-[var(--purple)]"
-            style={{ color: "var(--fg-secondary)" }}
-          >
-            Browse
+          <Link href="/recommendations" className="nav-tab nav-tab-browse">
+            📚 Browse
           </Link>
 
-          <Link
-            href="/add-recommendation"
-            className="font-semibold transition-colors hover:text-[var(--purple)]"
-            style={{ color: "var(--fg-secondary)" }}
-          >
-            Add
+          <Link href="/add-recommendation" className="nav-tab nav-tab-add">
+            ✏️ Add
           </Link>
 
           <button

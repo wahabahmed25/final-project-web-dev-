@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Caveat } from "next/font/google";
 import Navbar from "@/components/NavBar";
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  weight: ["400", "600", "700"],
+});
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 
@@ -17,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={caveat.variable}>
         <ThemeProvider>
           <AuthProvider>
             <Navbar />

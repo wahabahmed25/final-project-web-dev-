@@ -268,3 +268,103 @@ button, input, textarea, select { font: inherit; }
 .dark .theme-pill {
   border-color: rgba(192, 132, 252, 0.35);
 }
+
+/* ── Fun Handwritten Font ───────────────────────────────────────────── */
+h1, h2, h3, .font-fun {
+  font-family: var(--font-caveat), cursive;
+  letter-spacing: 0.01em;
+}
+
+/* ── Nav Tab Stickers ───────────────────────────────────────────────── */
+.nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 2px 3px 8px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.55);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-caveat), cursive;
+  letter-spacing: 0.02em;
+}
+.nav-tab:hover {
+  transform: translateY(-2px) scale(1.07) !important;
+  box-shadow: 3px 5px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.55);
+}
+.nav-tab-browse {
+  background: #dbeafe;
+  color: #1d4ed8;
+  transform: rotate(-1.5deg);
+}
+.dark .nav-tab-browse { background: #1e3a8a; color: #bfdbfe; }
+.nav-tab-add {
+  background: #dcfce7;
+  color: #166534;
+  transform: rotate(1.2deg);
+}
+.dark .nav-tab-add { background: #14532d; color: #bbf7d0; }
+
+/* ── Golden Note (Top Upvoted) ──────────────────────────────────────── */
+.note-golden {
+  background: linear-gradient(140deg, #fefce8 55%, #fef3c7 100%) !important;
+  box-shadow:
+    3px 6px 18px rgba(0,0,0,0.18),
+    0 0 0 2px rgba(251,191,36,0.75),
+    0 0 24px rgba(245,158,11,0.50),
+    0 0 55px rgba(245,158,11,0.18) !important;
+  animation: golden-shimmer 3s ease-in-out infinite;
+}
+.dark .note-golden {
+  background: linear-gradient(140deg, #2a2005 55%, #1e1800 100%) !important;
+}
+.note-golden::before {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b, #fbbf24) !important;
+  box-shadow: 0 0 14px rgba(245,158,11,0.65) !important;
+}
+@keyframes golden-shimmer {
+  0%, 100% {
+    box-shadow:
+      3px 6px 18px rgba(0,0,0,0.18),
+      0 0 0 2px rgba(251,191,36,0.75),
+      0 0 24px rgba(245,158,11,0.50),
+      0 0 55px rgba(245,158,11,0.18);
+  }
+  50% {
+    box-shadow:
+      3px 6px 18px rgba(0,0,0,0.18),
+      0 0 0 2px rgba(251,191,36,0.92),
+      0 0 40px rgba(245,158,11,0.72),
+      0 0 85px rgba(245,158,11,0.32);
+  }
+}
+
+/* ── Torn Note (Low Rating) ─────────────────────────────────────────── */
+.note-torn {
+  background: #ffe4e6 !important;
+  overflow: visible !important;
+}
+.dark .note-torn { background: #2d0a12 !important; }
+.note-torn::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: -1px;
+  right: -1px;
+  height: 22px;
+  background: inherit;
+  clip-path: polygon(
+    0% 0%,
+    3% 60%, 6% 5%, 10% 75%, 14% 15%, 18% 85%,
+    22% 10%, 26% 70%, 30% 0%, 34% 80%, 38% 20%, 42% 78%,
+    46% 8%, 50% 68%, 54% 3%, 58% 82%, 62% 18%, 66% 88%,
+    70% 12%, 74% 72%, 78% 2%, 82% 78%, 86% 22%, 90% 82%,
+    94% 8%, 97% 62%, 100% 0%,
+    100% 100%, 0% 100%
+  );
+  z-index: 3;
+  filter: brightness(0.9);
+}
