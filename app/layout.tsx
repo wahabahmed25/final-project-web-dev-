@@ -4,6 +4,7 @@ import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: "Hunter Recommendations Hub",
@@ -17,15 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <AuthProvider>
-          <ToastProvider>
-            <Navbar />
-            <main style={{ flex: 1 }}>{children}</main>
-            <Footer />
-          </ToastProvider>
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <ToastProvider>
+              <Navbar />
+              <main style={{ flex: 1 }}>{children}</main>
+              <Footer />
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

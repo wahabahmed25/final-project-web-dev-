@@ -40,7 +40,7 @@ export default function LoginPage() {
               boxShadow: "var(--shadow-lg)",
             }}
           >
-            🐝
+            
           </div>
           <h1
             style={{

@@ -66,7 +66,7 @@ export default function AddRecommendationPage() {
           }}
         >
           {[
-            { icon: "🎯", tip: "Be specific — a precise location helps." },
+            { icon: "🎯", tip: "Be specific, a precise location helps." },
             { icon: "⭐", tip: "Honest ratings are more useful than perfect ones." },
             { icon: "🏷️", tip: "Tags help others discover your pick." },
           ].map((item) => (

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth();
@@ -22,7 +23,8 @@ export default function Navbar() {
           top: 0,
           zIndex: 50,
           borderBottom: "1px solid var(--border)",
-          background: "rgba(255,255,255,0.92)",
+          /* Use surface variable instead of hardcoded white */
+          background: "color-mix(in srgb, var(--surface) 92%, transparent)",
           backdropFilter: "blur(16px)",
         }}
       >
@@ -55,7 +57,7 @@ export default function Navbar() {
                 flexShrink: 0,
               }}
             >
-              🐝
+              
             </span>
             <span
               style={{
@@ -102,6 +104,11 @@ export default function Navbar() {
 
             <div style={{ width: "1px", height: "1.25rem", background: "var(--border)", margin: "0 0.5rem" }} />
 
+            {/* Theme toggle */}
+            <ThemeToggle />
+
+            <div style={{ width: "1px", height: "1.25rem", background: "var(--border)", margin: "0 0.5rem" }} />
+
             {loading ? (
               <span style={{ fontSize: "0.875rem", color: "var(--text-faint)" }}>...</span>
             ) : user ? (
@@ -137,59 +144,31 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            className="nav-mobile-btn"
-            onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "0.5rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "5px",
-              width: "2.5rem",
-              height: "2.5rem",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span
+          {/* Mobile: theme toggle + hamburger */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }} className="nav-mobile-btn">
+            <ThemeToggle />
+            <button
+              onClick={() => setMobileOpen((o) => !o)}
+              aria-label="Toggle menu"
               style={{
-                display: "block",
-                width: "20px",
-                height: "2px",
-                background: "var(--hunter-purple)",
-                borderRadius: "2px",
-                transition: "all 0.25s",
-                transform: mobileOpen ? "translateY(7px) rotate(45deg)" : "none",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "0.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "5px",
+                width: "2.5rem",
+                height: "2.5rem",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: "20px",
-                height: "2px",
-                background: "var(--hunter-purple)",
-                borderRadius: "2px",
-                transition: "all 0.25s",
-                opacity: mobileOpen ? 0 : 1,
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: "20px",
-                height: "2px",
-                background: "var(--hunter-purple)",
-                borderRadius: "2px",
-                transition: "all 0.25s",
-                transform: mobileOpen ? "translateY(-7px) rotate(-45deg)" : "none",
-              }}
-            />
-          </button>
+            >
+              <span style={{ display: "block", width: "20px", height: "2px", background: "var(--hunter-purple)", borderRadius: "2px", transition: "all 0.25s", transform: mobileOpen ? "translateY(7px) rotate(45deg)" : "none" }} />
+              <span style={{ display: "block", width: "20px", height: "2px", background: "var(--hunter-purple)", borderRadius: "2px", transition: "all 0.25s", opacity: mobileOpen ? 0 : 1 }} />
+              <span style={{ display: "block", width: "20px", height: "2px", background: "var(--hunter-purple)", borderRadius: "2px", transition: "all 0.25s", transform: mobileOpen ? "translateY(-7px) rotate(-45deg)" : "none" }} />
+            </button>
+          </div>
         </nav>
 
         {/* Mobile menu */}
@@ -225,7 +204,7 @@ export default function Navbar() {
               {loading ? null : user ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", margin: 0 }}>
-                    Signed in as <strong>{user.displayName || user.email}</strong>
+                    Signed in as <strong style={{ color: "var(--foreground)" }}>{user.displayName || user.email}</strong>
                   </p>
                   <button
                     onClick={() => { logout(); setMobileOpen(false); }}

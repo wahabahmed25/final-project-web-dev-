@@ -1,16 +1,20 @@
 import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
 import { categories } from "@/data/categories";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function HomePage() {
   return (
     <div>
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section
-        className="hero-bg"
-        style={{ padding: "5rem 1.5rem 4rem" }}
-      >
+      <section className="hero-bg" style={{ padding: "5rem 1.5rem 4rem" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+
+          {/* Theme toggle — top right */}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
+            <ThemeToggle />
+          </div>
+
           <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
             {/* Badge */}
             <div className="fade-up" style={{ marginBottom: "1.5rem" }}>
@@ -29,7 +33,7 @@ export default function HomePage() {
                   letterSpacing: "0.02em",
                 }}
               >
-                🐝 Built for Hunter students
+                Built for Hunter students
               </span>
             </div>
 
@@ -47,7 +51,7 @@ export default function HomePage() {
               <span
                 style={{
                   display: "block",
-                  background: `linear-gradient(135deg, var(--hunter-purple) 0%, #8B4DB8 100%)`,
+                  background: "linear-gradient(135deg, var(--hunter-purple) 0%, #8B4DB8 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}
@@ -62,13 +66,12 @@ export default function HomePage() {
                 fontSize: "1.0625rem",
                 color: "var(--text-muted)",
                 lineHeight: 1.7,
-                marginBottom: "2rem",
                 maxWidth: 580,
                 margin: "0 auto 2rem",
               }}
             >
               Student-curated recommendations for study spots, food, coffee,
-              bookstores, and campus resources. No endless scrolling — just
+              bookstores, and campus resources. No endless scrolling, just
               clear, helpful picks.
             </p>
 
@@ -107,26 +110,15 @@ export default function HomePage() {
             }}
           >
             {[
-              { number: "5", label: "Categories" },
-              { number: "100%", label: "Student-made" },
-              { number: "Free", label: "Always" },
+              { number: "5",     label: "Categories" },
+              { number: "100%",  label: "Student-made" },
+              { number: "Free",  label: "Always" },
             ].map((stat) => (
               <div
                 key={stat.label}
-                style={{
-                  background: "var(--surface)",
-                  padding: "1.25rem 1rem",
-                  textAlign: "center",
-                }}
+                style={{ background: "var(--surface)", padding: "1.25rem 1rem", textAlign: "center" }}
               >
-                <p
-                  style={{
-                    fontFamily: "'DM Serif Display', serif",
-                    fontSize: "1.5rem",
-                    color: "var(--hunter-purple)",
-                    margin: "0 0 0.2rem",
-                  }}
-                >
+                <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.5rem", color: "var(--hunter-purple)", margin: "0 0 0.2rem" }}>
                   {stat.number}
                 </p>
                 <p style={{ fontSize: "0.775rem", color: "var(--text-faint)", margin: 0, fontWeight: 500 }}>
@@ -211,7 +203,7 @@ export default function HomePage() {
                 color: "var(--foreground)",
               }}
             >
-              Simple as 1 — 2 — 3
+              Simple as 1 - 2 - 3
             </h2>
           </div>
 
@@ -223,47 +215,18 @@ export default function HomePage() {
             }}
           >
             {[
-              {
-                number: "01",
-                title: "Pick a category",
-                desc: "Choose study spots, food, coffee, bookstores, or school resources.",
-                icon: "🗂️",
-              },
-              {
-                number: "02",
-                title: "Compare options",
-                desc: "Read descriptions, ratings, tags, and locations from fellow students.",
-                icon: "⭐",
-              },
-              {
-                number: "03",
-                title: "Share your own",
-                desc: "Log in with Google and add your own helpful recommendations.",
-                icon: "✏️",
-              },
+              { number: "01", title: "Pick a category",  desc: "Choose study spots, food, coffee, bookstores, or school resources.", icon: "🗂️" },
+              { number: "02", title: "Compare options",  desc: "Read descriptions, ratings, tags, and locations from fellow students.", icon: "⭐" },
+              { number: "03", title: "Share your own",   desc: "Log in with Google and add your own helpful recommendations.", icon: "✏️" },
             ].map((step) => (
               <div key={step.number} className="card" style={{ padding: "1.75rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
-                  <span
-                    style={{
-                      fontFamily: "'DM Serif Display', serif",
-                      fontSize: "1.5rem",
-                      color: "var(--hunter-gold)",
-                      lineHeight: 1,
-                    }}
-                  >
+                  <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.5rem", color: "var(--hunter-gold)", lineHeight: 1 }}>
                     {step.number}
                   </span>
                   <span style={{ fontSize: "1.5rem" }}>{step.icon}</span>
                 </div>
-                <h3
-                  style={{
-                    fontFamily: "'DM Serif Display', serif",
-                    fontSize: "1.1rem",
-                    color: "var(--foreground)",
-                    marginBottom: "0.5rem",
-                  }}
-                >
+                <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.1rem", color: "var(--foreground)", marginBottom: "0.5rem" }}>
                   {step.title}
                 </h3>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.65 }}>
@@ -280,7 +243,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div
             style={{
-              background: `linear-gradient(135deg, var(--hunter-purple) 0%, var(--hunter-purple-dark) 100%)`,
+              background: "linear-gradient(135deg, var(--hunter-purple) 0%, var(--hunter-purple-dark) 100%)",
               borderRadius: "var(--radius-2xl)",
               padding: "3rem 2rem",
               textAlign: "center",
@@ -288,29 +251,8 @@ export default function HomePage() {
               overflow: "hidden",
             }}
           >
-            {/* Decorative */}
-            <div
-              style={{
-                position: "absolute",
-                top: "-3rem",
-                right: "-3rem",
-                width: "12rem",
-                height: "12rem",
-                borderRadius: "50%",
-                background: "rgba(238,177,17,0.15)",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                bottom: "-2rem",
-                left: "-2rem",
-                width: "8rem",
-                height: "8rem",
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.06)",
-              }}
-            />
+            <div style={{ position: "absolute", top: "-3rem", right: "-3rem", width: "12rem", height: "12rem", borderRadius: "50%", background: "rgba(238,177,17,0.15)" }} />
+            <div style={{ position: "absolute", bottom: "-2rem", left: "-2rem", width: "8rem", height: "8rem", borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
 
             <h2
               style={{
@@ -333,8 +275,7 @@ export default function HomePage() {
                 position: "relative",
               }}
             >
-              Help your fellow students by sharing your favorite places and
-              resources. It only takes a minute.
+              Help your fellow students by sharing your favorite places and resources. It only takes a minute.
             </p>
             <Link
               href="/add-recommendation"

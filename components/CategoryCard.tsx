@@ -46,6 +46,7 @@ export default function CategoryCard({ category, index = 0 }: { category: Catego
         {category.icon}
       </div>
 
+      {/* Title — uses CSS variable so it flips in dark mode */}
       <h3
         style={{
           fontFamily: "'DM Serif Display', serif",
@@ -57,6 +58,7 @@ export default function CategoryCard({ category, index = 0 }: { category: Catego
         {category.label}
       </h3>
 
+      {/* Description */}
       <p
         style={{
           fontSize: "0.85rem",
@@ -68,6 +70,7 @@ export default function CategoryCard({ category, index = 0 }: { category: Catego
         {category.description}
       </p>
 
+      {/* CTA */}
       <span
         style={{
           display: "inline-flex",
