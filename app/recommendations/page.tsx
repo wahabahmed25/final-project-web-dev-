@@ -74,8 +74,16 @@ export default function RecommendationsPage() {
     return list;
   }, [recommendations, search, sort, activeCategory]);
 
+  // rank by net score (upvotes - downvotes) within current filtered list
+  const rankedIds = useMemo(() => {
+    const sorted = [...filtered].sort((a, b) => (b.upvotes - (b.downvotes ?? 0)) - (a.upvotes - (a.downvotes ?? 0)));
+    const map = new Map<string, number>();
+    sorted.forEach((r, i) => { if (r.upvotes > 0) map.set(r.id, i + 1); });
+    return map;
+  }, [filtered]);
+
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <div className="page-recs" style={{ minHeight: "100vh" }}>
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
 
         {/* Header */}
@@ -197,7 +205,7 @@ export default function RecommendationsPage() {
 
           {!loading && !error && filtered.length > 0 && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
-              {filtered.map((r) => <RecommendationCard key={r.id} recommendation={r} />)}
+              {filtered.map((r) => <RecommendationCard key={r.id} recommendation={r} rank={rankedIds.get(r.id)} />)}
             </div>
           )}
         </div>

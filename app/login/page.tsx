@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="hero-bg"
+      className="page-login hero-bg"
       style={{
         minHeight: "calc(100vh - 4rem)",
         display: "flex",

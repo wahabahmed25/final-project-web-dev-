@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function AddRecommendationPage() {
   return (
-    <div style={{ minHeight: "calc(100vh - 4rem)", padding: "2.5rem 1.5rem" }}>
+    <div className="page-add" style={{ minHeight: "calc(100vh - 4rem)", padding: "2.5rem 1.5rem" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
         {/* Back */}
         <Link

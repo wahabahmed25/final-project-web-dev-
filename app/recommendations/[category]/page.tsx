@@ -62,8 +62,16 @@ export default function CategoryRecommendationsPage() {
     return list;
   }, [recommendations, search, sort]);
 
+  // rank by net score within this category
+  const rankedIds = useMemo(() => {
+    const sorted = [...filtered].sort((a, b) => (b.upvotes - (b.downvotes ?? 0)) - (a.upvotes - (a.downvotes ?? 0)));
+    const map = new Map<string, number>();
+    sorted.forEach((r, i) => { if (r.upvotes > 0) map.set(r.id, i + 1); });
+    return map;
+  }, [filtered]);
+
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <div className={`page-cat-${category}`} style={{ minHeight: "100vh", position: "relative" }}>
       {/* Category hero */}
       <div
         style={{
@@ -97,8 +105,8 @@ export default function CategoryRecommendationsPage() {
                 </span>
               </div>
               <h1
+                className="fun-heading"
                 style={{
-                  fontFamily: "'DM Serif Display', serif",
                   fontSize: "clamp(2rem, 5vw, 3rem)",
                   color: "var(--foreground)",
                   margin: 0,
@@ -184,7 +192,7 @@ export default function CategoryRecommendationsPage() {
 
           {!loading && !error && filtered.length > 0 && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
-              {filtered.map((r) => <RecommendationCard key={r.id} recommendation={r} />)}
+              {filtered.map((r) => <RecommendationCard key={r.id} recommendation={r} rank={rankedIds.get(r.id)} />)}
             </div>
           )}
         </div>

@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Caveat } from "next/font/google";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { ThemeProvider } from "next-themes";
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  weight: ["400", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Hunter Recommendations Hub",
@@ -19,12 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <body className={caveat.variable} style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <ToastProvider>
               <Navbar />
-              <main style={{ flex: 1 }}>{children}</main>
+              <main style={{ flex: 1, position: "relative", zIndex: 1 }}>{children}</main>
               <Footer />
             </ToastProvider>
           </AuthProvider>

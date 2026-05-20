@@ -157,7 +157,7 @@ export default function RecommendationDetailPage() {
   const icon = getCategoryIcon(recommendation.category);
 
   return (
-    <div style={{ maxWidth: 768, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+    <div className="page-detail" style={{ maxWidth: 768, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
       {/* Back */}
       <Link
         href="/recommendations"
