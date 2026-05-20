@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
 
 export const metadata: Metadata = {
   title: "Hunter Recommendations Hub",
   description:
-    "A student-focused recommendations hub for places and resources on or near Hunter College.",
+    "A student-built recommendations hub for study spots, food, coffee, bookstores, and resources on or near Hunter College.",
 };
 
 export default function RootLayout({
@@ -16,10 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <AuthProvider>
-          <Navbar />
-          <main>{children}</main>
+          <ToastProvider>
+            <Navbar />
+            <main style={{ flex: 1 }}>{children}</main>
+            <Footer />
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

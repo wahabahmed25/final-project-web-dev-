@@ -1,23 +1,85 @@
 import Link from "next/link";
 import type { Category } from "@/data/categories";
 
-export default function CategoryCard({ category }: { category: Category }) {
+export default function CategoryCard({ category, index = 0 }: { category: Category; index?: number }) {
   return (
     <Link
       href={`/recommendations/${category.value}`}
-      className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+      className={`card card-hover fade-up-${Math.min(index + 1, 6)}`}
+      style={{
+        display: "block",
+        padding: "1.5rem",
+        textDecoration: "none",
+        overflow: "hidden",
+        position: "relative",
+      }}
     >
-      <h3 className="text-lg font-semibold text-slate-950">
+      {/* Background accent */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-1rem",
+          right: "-1rem",
+          width: "6rem",
+          height: "6rem",
+          borderRadius: "50%",
+          background: category.gradient,
+          opacity: 0.6,
+        }}
+      />
+
+      {/* Icon */}
+      <div
+        style={{
+          width: "2.75rem",
+          height: "2.75rem",
+          borderRadius: "var(--radius-md)",
+          background: category.gradient,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "1.4rem",
+          marginBottom: "1rem",
+          position: "relative",
+        }}
+      >
+        {category.icon}
+      </div>
+
+      <h3
+        style={{
+          fontFamily: "'DM Serif Display', serif",
+          fontSize: "1.125rem",
+          color: "var(--foreground)",
+          marginBottom: "0.375rem",
+        }}
+      >
         {category.label}
       </h3>
 
-      <p className="mt-2 text-sm leading-6 text-slate-600">
+      <p
+        style={{
+          fontSize: "0.85rem",
+          color: "var(--text-muted)",
+          lineHeight: 1.6,
+          marginBottom: "1.25rem",
+        }}
+      >
         {category.description}
       </p>
 
-      <p className="mt-4 text-sm font-semibold text-blue-600">
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.25rem",
+          fontSize: "0.825rem",
+          fontWeight: 600,
+          color: category.accent,
+        }}
+      >
         View recommendations →
-      </p>
+      </span>
     </Link>
   );
 }

@@ -1,47 +1,141 @@
 import Link from "next/link";
-import { getCategoryLabel } from "@/data/categories";
+import { getCategoryLabel, getCategoryIcon, getCategoryAccent } from "@/data/categories";
 import type { Recommendation } from "@/types/recommendation";
+
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <div style={{ display: "flex", gap: "1px", alignItems: "center" }}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <span
+          key={n}
+          style={{
+            fontSize: "0.7rem",
+            color: n <= rating ? "var(--hunter-gold)" : "var(--border)",
+          }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function RecommendationCard({
   recommendation,
 }: {
   recommendation: Recommendation;
 }) {
+  const accent = getCategoryAccent(recommendation.category);
+  const icon = getCategoryIcon(recommendation.category);
+
   return (
     <Link
       href={`/recommendation/${recommendation.id}`}
-      className="block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+      className="card card-hover"
+      style={{
+        display: "block",
+        padding: "1.25rem",
+        textDecoration: "none",
+      }}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-            {getCategoryLabel(recommendation.category)}
-          </p>
-
-          <h3 className="mt-1 text-lg font-semibold text-slate-950">
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.75rem" }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", marginBottom: "0.3rem" }}>
+            <span style={{ fontSize: "0.8rem" }}>{icon}</span>
+            <span
+              style={{
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                color: accent,
+              }}
+            >
+              {getCategoryLabel(recommendation.category)}
+            </span>
+          </div>
+          <h3
+            style={{
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: "1.0625rem",
+              color: "var(--foreground)",
+              lineHeight: 1.3,
+            }}
+            className="line-clamp-2"
+          >
             {recommendation.title}
           </h3>
         </div>
 
-        <div className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-semibold text-yellow-800">
-          ⭐ {recommendation.rating}/5
+        {/* Rating badge */}
+        <div
+          style={{
+            flexShrink: 0,
+            background: "var(--hunter-gold-light)",
+            border: "1px solid rgba(238,177,17,0.25)",
+            borderRadius: "100px",
+            padding: "0.2rem 0.625rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.3rem",
+          }}
+        >
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--hunter-gold-dark)" }}>
+            {recommendation.rating}
+          </span>
+          <span style={{ fontSize: "0.65rem", color: "var(--hunter-gold)" }}>★</span>
         </div>
       </div>
 
-      <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600">
+      {/* Stars */}
+      <div style={{ marginTop: "0.5rem" }}>
+        <StarRating rating={recommendation.rating} />
+      </div>
+
+      {/* Description */}
+      <p
+        className="line-clamp-2"
+        style={{
+          marginTop: "0.625rem",
+          fontSize: "0.8375rem",
+          color: "var(--text-muted)",
+          lineHeight: 1.6,
+        }}
+      >
         {recommendation.description}
       </p>
 
-      <p className="mt-3 text-sm text-slate-500">
-        📍 {recommendation.location}
+      {/* Location */}
+      <p
+        style={{
+          marginTop: "0.625rem",
+          fontSize: "0.8rem",
+          color: "var(--text-faint)",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.25rem",
+        }}
+      >
+        <span>📍</span>
+        {recommendation.location}
       </p>
 
+      {/* Tags */}
       {recommendation.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
           {recommendation.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
+              style={{
+                padding: "0.2rem 0.625rem",
+                borderRadius: "100px",
+                fontSize: "0.7rem",
+                fontWeight: 500,
+                background: "var(--hunter-purple-faint)",
+                color: "var(--hunter-purple)",
+                border: "1px solid var(--border-light)",
+              }}
             >
               #{tag}
             </span>
@@ -49,9 +143,32 @@ export default function RecommendationCard({
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-500">
-        <span>Posted by {recommendation.createdByName}</span>
-        <span>{recommendation.upvotes} upvotes</span>
+      {/* Footer */}
+      <div
+        style={{
+          marginTop: "1rem",
+          paddingTop: "0.75rem",
+          borderTop: "1px solid var(--border-light)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>
+          by {recommendation.createdByName}
+        </span>
+        <span
+          style={{
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            color: "var(--hunter-purple)",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.25rem",
+          }}
+        >
+          ▲ {recommendation.upvotes}
+        </span>
       </div>
     </Link>
   );

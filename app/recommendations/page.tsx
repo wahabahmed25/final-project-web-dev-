@@ -4,129 +4,203 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import RecommendationCard from "@/components/RecommentationCard";
 import SearchInput from "@/components/SearchInput";
+import { RecommendationCardSkeleton } from "@/components/LoadingSkeleton";
 import { categories } from "@/data/categories";
 import { getAllRecommendations } from "@/lib/recommendation";
 import type { Recommendation } from "@/types/recommendation";
 
+type SortOption = "newest" | "top-rated" | "popular";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "newest",    label: "Newest" },
+  { value: "top-rated", label: "Top Rated" },
+  { value: "popular",   label: "Most Upvoted" },
+];
+
 export default function RecommendationsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortOption>("newest");
+  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadRecommendations() {
+    async function load() {
       try {
         setLoading(true);
         const data = await getAllRecommendations();
         setRecommendations(data);
-      } catch (err) {
-        console.error(err);
+      } catch {
         setError("Could not load recommendations.");
       } finally {
         setLoading(false);
       }
     }
-
-    loadRecommendations();
+    load();
   }, []);
 
-  const filteredRecommendations = useMemo(() => {
-    const term = search.toLowerCase().trim();
+  const filtered = useMemo(() => {
+    let list = [...recommendations];
 
-    if (!term) {
-      return recommendations;
+    // Category filter
+    if (activeCategory !== "all") {
+      list = list.filter((r) => r.category === activeCategory);
     }
 
-    return recommendations.filter((item) => {
-      const searchableText = [
-        item.title,
-        item.description,
-        item.location,
-        item.category,
-        ...item.tags,
-      ]
-        .join(" ")
-        .toLowerCase();
+    // Search
+    const term = search.toLowerCase().trim();
+    if (term) {
+      list = list.filter((r) =>
+        [r.title, r.description, r.location, r.category, ...r.tags]
+          .join(" ")
+          .toLowerCase()
+          .includes(term)
+      );
+    }
 
-      return searchableText.includes(term);
-    });
-  }, [recommendations, search]);
+    // Sort
+    switch (sort) {
+      case "top-rated":
+        list.sort((a, b) => b.rating - a.rating);
+        break;
+      case "popular":
+        list.sort((a, b) => b.upvotes - a.upvotes);
+        break;
+      default: // newest
+        list.sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+    }
+
+    return list;
+  }, [recommendations, search, sort, activeCategory]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+    <div style={{ minHeight: "100vh" }}>
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+
+        {/* Header */}
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem", marginBottom: "2rem" }}>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-              Browse
-            </p>
-            <h1 className="mt-2 text-4xl font-bold text-slate-950">
+            <span
+              style={{
+                display: "block",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--hunter-gold-dark)",
+                marginBottom: "0.375rem",
+              }}
+            >
+              ✦ Browse
+            </span>
+            <h1
+              style={{
+                fontFamily: "'DM Serif Display', serif",
+                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                color: "var(--foreground)",
+                margin: 0,
+              }}
+            >
               All Recommendations
             </h1>
-            <p className="mt-3 max-w-2xl text-slate-600">
-              Search student recommendations for useful places and resources on
-              or near Hunter.
+            <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>
+              Student picks for the best spots near Hunter.
             </p>
           </div>
-
-          <Link
-            href="/add-recommendation"
-            className="rounded-full bg-blue-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            Add Recommendation
+          <Link href="/add-recommendation" className="btn btn-purple">
+            + Add Recommendation
           </Link>
         </div>
 
-        <div className="mt-8">
-          <SearchInput value={search} onChange={setSearch} />
-        </div>
+        {/* Search */}
+        <SearchInput value={search} onChange={setSearch} />
 
-        <div className="mt-6 flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Link
-              key={category.value}
-              href={`/recommendations/${category.value}`}
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:text-blue-600"
+        {/* Category pills */}
+        <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          <button
+            className={`tag${activeCategory === "all" ? " active" : ""}`}
+            onClick={() => setActiveCategory("all")}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.value}
+              className={`tag${activeCategory === cat.value ? " active" : ""}`}
+              onClick={() => setActiveCategory(activeCategory === cat.value ? "all" : cat.value)}
             >
-              {category.label}
-            </Link>
+              {cat.icon} {cat.label}
+            </button>
           ))}
         </div>
 
-        {loading && (
-          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 text-slate-600">
-            Loading recommendations...
-          </div>
-        )}
+        {/* Sort */}
+        <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-faint)" }}>Sort:</span>
+          {SORT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSort(opt.value)}
+              style={{
+                padding: "0.35rem 0.875rem",
+                borderRadius: "100px",
+                border: "1.5px solid",
+                borderColor: sort === opt.value ? "var(--hunter-purple)" : "var(--border)",
+                background: sort === opt.value ? "var(--hunter-purple)" : "var(--surface)",
+                color: sort === opt.value ? "#fff" : "var(--text-muted)",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
 
-        {error && (
-          <div className="mt-10 rounded-2xl bg-red-50 p-6 text-red-700">
-            {error}
-          </div>
-        )}
+          {!loading && (
+            <span style={{ marginLeft: "auto", fontSize: "0.8rem", color: "var(--text-faint)" }}>
+              {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
 
-        {!loading && !error && filteredRecommendations.length === 0 && (
-          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 text-center">
-            <h2 className="text-lg font-semibold text-slate-950">
-              No recommendations found
-            </h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Try a different search or add the first recommendation.
-            </p>
-          </div>
-        )}
+        {/* Results */}
+        <div style={{ marginTop: "1.75rem" }}>
+          {loading && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+              {Array.from({ length: 6 }).map((_, i) => <RecommendationCardSkeleton key={i} />)}
+            </div>
+          )}
 
-        {!loading && !error && filteredRecommendations.length > 0 && (
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {filteredRecommendations.map((recommendation) => (
-              <RecommendationCard
-                key={recommendation.id}
-                recommendation={recommendation}
-              />
-            ))}
-          </div>
-        )}
+          {error && (
+            <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: "var(--radius-lg)", padding: "1rem 1.25rem", color: "var(--error)", fontSize: "0.9rem" }}>
+              {error}
+            </div>
+          )}
+
+          {!loading && !error && filtered.length === 0 && (
+            <div className="card" style={{ padding: "3rem", textAlign: "center" }}>
+              <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "1rem" }}>🔍</span>
+              <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.375rem", color: "var(--foreground)", marginBottom: "0.5rem" }}>
+                No recommendations found
+              </h2>
+              <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "1.5rem" }}>
+                {search ? "Try a different search term." : "Be the first to add one!"}
+              </p>
+              <Link href="/add-recommendation" className="btn btn-purple">
+                Add Recommendation
+              </Link>
+            </div>
+          )}
+
+          {!loading && !error && filtered.length > 0 && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+              {filtered.map((r) => <RecommendationCard key={r.id} recommendation={r} />)}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
