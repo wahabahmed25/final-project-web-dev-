@@ -7,6 +7,7 @@ import RecommendationCard from "@/components/RecommentationCard";
 import SearchInput from "@/components/SearchInput";
 import ShuffleModal from "@/components/ShuffleModal";
 import NearbyPlacesSection from "@/components/NearbyPlacesSection";
+import CategoryParticles from "@/components/CategoryParticles";
 import { RecommendationCardSkeleton } from "@/components/LoadingSkeleton";
 import { categories, getCategoryLabel, getCategoryIcon, getCategoryAccent, isValidCategory } from "@/data/categories";
 import { getRecommendationsByCategory } from "@/lib/recommendation";
@@ -91,6 +92,7 @@ export default function CategoryRecommendationsPage() {
 
   return (
     <div className={`page-cat-${category}`} style={{ minHeight: "100vh", position: "relative" }}>
+      <CategoryParticles category={category} />
       {shufflePick && (
         <ShuffleModal
           recommendation={shufflePick}

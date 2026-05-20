@@ -21,9 +21,14 @@ export default function LoginPage() {
         alignItems: "center",
         justifyContent: "center",
         padding: "2rem 1.5rem",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <div style={{ width: "100%", maxWidth: 420 }}>
+      {/* Neon glow orb — blue in light, purple in dark */}
+      <div className="login-glow-orb" />
+
+      <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
         {/* Logo mark */}
         <div className="fade-up" style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div
