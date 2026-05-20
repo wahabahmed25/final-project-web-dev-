@@ -121,11 +121,17 @@ export default function RecommendationCard({
         {recommendation.description}
       </p>
 
-      {/* Location */}
-      <p style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "var(--text-faint)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+      {/* Location — links to Google Maps */}
+      <a
+        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(recommendation.location + " Hunter College New York")}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "var(--text-faint)", display: "flex", alignItems: "center", gap: "0.25rem", textDecoration: "none" }}
+      >
         <span>📍</span>
-        {recommendation.location}
-      </p>
+        <span style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>{recommendation.location}</span>
+      </a>
 
       {/* Tags */}
       {recommendation.tags.length > 0 && (

@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { categories, getCategoryTags } from "@/data/categories";
-import { addRecommendation } from "@/lib/recommendation";
+import { addRecommendation, updateRecommendation } from "@/lib/recommendation";
 import type { RecommendationCategory } from "@/types/recommendation";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
@@ -30,17 +30,29 @@ function CharCount({ current, max }: { current: number; max: number }) {
   );
 }
 
-export default function RecommendationForm() {
+interface Props {
+  initialValues?: {
+    title: string;
+    category: RecommendationCategory;
+    description: string;
+    location: string;
+    rating: number;
+    tags: string[];
+  };
+  editId?: string;
+}
+
+export default function RecommendationForm({ initialValues, editId }: Props) {
   const router = useRouter();
   const { user } = useAuth();
   const { showToast } = useToast();
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<RecommendationCategory>("study-spots");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [rating, setRating] = useState(5);
-  const [tags, setTags] = useState<string[]>([]);
+  const [title, setTitle] = useState(initialValues?.title ?? "");
+  const [category, setCategory] = useState<RecommendationCategory>(initialValues?.category ?? "study-spots");
+  const [description, setDescription] = useState(initialValues?.description ?? "");
+  const [location, setLocation] = useState(initialValues?.location ?? "");
+  const [rating, setRating] = useState(initialValues?.rating ?? 5);
+  const [tags, setTags] = useState<string[]>(initialValues?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -102,18 +114,19 @@ export default function RecommendationForm() {
 
     try {
       setIsSubmitting(true);
-      await addRecommendation({
-        title,
-        category,
-        description,
-        location,
-        rating,
-        tags,
-        createdBy: user.uid,
-        createdByName: user.displayName || user.email || "Student",
-      });
-      showToast("Recommendation added successfully! 🎉", "success");
-      router.push("/recommendations");
+      if (editId) {
+        await updateRecommendation(editId, { title, description, location, rating, tags });
+        showToast("Recommendation updated! ✅", "success");
+        router.push(`/recommendation/${editId}`);
+      } else {
+        await addRecommendation({
+          title, category, description, location, rating, tags,
+          createdBy: user.uid,
+          createdByName: user.displayName || user.email || "Student",
+        });
+        showToast("Recommendation added successfully! 🎉", "success");
+        router.push("/recommendations");
+      }
     } catch (err) {
       console.error(err);
       showToast("Something went wrong. Please try again.", "error");
@@ -315,22 +328,10 @@ export default function RecommendationForm() {
         >
           {isSubmitting ? (
             <>
-              <span
-                style={{
-                  width: "1rem",
-                  height: "1rem",
-                  borderRadius: "50%",
-                  border: "2px solid rgba(255,255,255,0.3)",
-                  borderTopColor: "#fff",
-                  animation: "spin 0.7s linear infinite",
-                  display: "inline-block",
-                }}
-              />
+              <span style={{ width:"1rem", height:"1rem", borderRadius:"50%", border:"2px solid rgba(255,255,255,0.3)", borderTopColor:"#fff", animation:"spin 0.7s linear infinite", display:"inline-block" }} />
               Saving...
             </>
-          ) : (
-            "Submit Recommendation"
-          )}
+          ) : editId ? "Save Changes" : "Submit Recommendation"}
         </button>
       </div>
 

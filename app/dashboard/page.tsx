@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
-import { getRecommendationsByUser, deleteRecommendation } from "@/lib/recommendation";
+import { getRecommendationsByUser, deleteRecommendation, getRecommendationById } from "@/lib/recommendation";
+import { getUserBookmarkIds } from "@/lib/bookmarks";
 import { getCategoryIcon, getCategoryLabel } from "@/data/categories";
 import { DashboardCardSkeleton } from "@/components/LoadingSkeleton";
 import type { Recommendation } from "@/types/recommendation";
@@ -41,6 +42,8 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [bookmarks, setBookmarks] = useState<Recommendation[]>([]);
+  const [activeTab, setActiveTab] = useState<"posts" | "saved">("posts");
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -55,10 +58,17 @@ export default function DashboardPage() {
     async function load() {
       try {
         setLoading(true);
-        const data = await getRecommendationsByUser(user!.uid);
-        setRecommendations(data);
+        const [posts, bookmarkIds] = await Promise.all([
+          getRecommendationsByUser(user!.uid),
+          getUserBookmarkIds(user!.uid),
+        ]);
+        setRecommendations(posts);
+        const bookmarkRecs = (
+          await Promise.all(bookmarkIds.map((bid) => getRecommendationById(bid)))
+        ).filter(Boolean) as Recommendation[];
+        setBookmarks(bookmarkRecs);
       } catch {
-        showToast("Could not load your recommendations.", "error");
+        showToast("Could not load your data.", "error");
       } finally {
         setLoading(false);
       }
@@ -165,24 +175,57 @@ export default function DashboardPage() {
           <StatCard icon="⭐" value={avgRating} label="Avg Rating" />
         </div>
 
-        {/* Recommendations list */}
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h2
+        {/* Tab bar */}
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", borderBottom: "1px solid var(--border)", paddingBottom: "0" }}>
+          {(["posts", "saved"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
               style={{
-                fontFamily: "'DM Serif Display', serif",
-                fontSize: "1.375rem",
-                color: "var(--foreground)",
-                margin: 0,
+                padding: "0.6rem 1.25rem", fontSize: "0.875rem", fontWeight: 600,
+                background: "none", border: "none", cursor: "pointer",
+                color: activeTab === tab ? "var(--hunter-purple)" : "var(--text-faint)",
+                borderBottom: activeTab === tab ? "2.5px solid var(--hunter-purple)" : "2.5px solid transparent",
+                marginBottom: "-1px", transition: "all 0.15s",
               }}
             >
-              Your Recommendations
-            </h2>
-          </div>
+              {tab === "posts" ? `📋 My Posts (${recommendations.length})` : `🔖 Saved (${bookmarks.length})`}
+            </button>
+          ))}
+        </div>
+
+        {/* Recommendations list */}
+        <div>
+          <div style={{ marginBottom: "1.25rem" }}></div>
 
           {loading ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {Array.from({ length: 4 }).map((_, i) => <DashboardCardSkeleton key={i} />)}
+              {Array.from({ length: 3 }).map((_, i) => <DashboardCardSkeleton key={i} />)}
+            </div>
+          ) : activeTab === "saved" && bookmarks.length === 0 ? (
+            <div className="card" style={{ padding: "3rem", textAlign: "center" }}>
+              <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "1rem" }}>🔖</span>
+              <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.25rem", color: "var(--foreground)", marginBottom: "0.5rem" }}>No saved spots yet</h3>
+              <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "1.5rem" }}>Hit the 🔖 Save button on any recommendation to find it here.</p>
+              <Link href="/recommendations" className="btn btn-purple">Browse Recommendations</Link>
+            </div>
+          ) : activeTab === "saved" ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {bookmarks.map((r) => (
+                <div key={r.id} className="card" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+                  <div style={{ width: "3rem", height: "3rem", borderRadius: "var(--radius-md)", background: "var(--hunter-gold-faint)", border: "1px solid rgba(238,177,17,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.25rem", flexShrink: 0 }}>
+                    {getCategoryIcon(r.category)}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1rem", color: "var(--foreground)", margin: "0 0 0.2rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</p>
+                    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "0.775rem", color: "var(--text-faint)" }}>{getCategoryLabel(r.category)}</span>
+                      <span style={{ fontSize: "0.775rem", color: "var(--hunter-gold-dark)" }}>★ {r.rating}/5</span>
+                    </div>
+                  </div>
+                  <Link href={`/recommendation/${r.id}`} className="btn btn-ghost" style={{ padding: "0.4rem 0.875rem", fontSize: "0.8rem" }}>View</Link>
+                </div>
+              ))}
             </div>
           ) : recommendations.length === 0 ? (
             <div className="card" style={{ padding: "3rem", textAlign: "center" }}>

@@ -25,6 +25,7 @@ export default function RecommendationsPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [minRating, setMinRating] = useState(0);
   const [shufflePick, setShufflePick] = useState<Recommendation | null>(null);
 
   useEffect(() => {
@@ -59,6 +60,8 @@ export default function RecommendationsPage() {
       );
     }
 
+    if (minRating > 0) list = list.filter((r) => r.rating >= minRating);
+
     switch (sort) {
       case "top-rated": list.sort((a, b) => b.rating - a.rating); break;
       case "popular":   list.sort((a, b) => b.upvotes - a.upvotes); break;
@@ -66,7 +69,7 @@ export default function RecommendationsPage() {
     }
 
     return list;
-  }, [recommendations, search, sort, activeCategory]);
+  }, [recommendations, search, sort, activeCategory, minRating]);
 
   const rankedIds = useMemo(() => {
     const sorted = [...filtered].sort((a, b) => (b.upvotes - (b.downvotes ?? 0)) - (a.upvotes - (a.downvotes ?? 0)));
@@ -185,6 +188,14 @@ export default function RecommendationsPage() {
               {opt.label}
             </button>
           ))}
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginLeft: "0.5rem" }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-faint)" }}>★ Min:</span>
+            <button onClick={() => setMinRating(0)} style={{ padding: "0.3rem 0.6rem", borderRadius: "100px", border: "1.5px solid", borderColor: minRating === 0 ? "var(--hunter-purple)" : "var(--border)", background: minRating === 0 ? "var(--hunter-purple)" : "var(--surface)", color: minRating === 0 ? "#fff" : "var(--text-muted)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>Any</button>
+            {[2, 3, 4, 5].map((n) => (
+              <button key={n} onClick={() => setMinRating(minRating === n ? 0 : n)} style={{ padding: "0.3rem 0.6rem", borderRadius: "100px", border: "1.5px solid", borderColor: minRating === n ? "var(--hunter-gold)" : "var(--border)", background: minRating === n ? "var(--hunter-gold-light)" : "var(--surface)", color: minRating === n ? "var(--hunter-gold-dark)" : "var(--text-muted)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>{"★".repeat(n)}</button>
+            ))}
+          </div>
 
           {!loading && (
             <span style={{ marginLeft: "auto", fontSize: "0.8rem", color: "var(--text-faint)" }}>

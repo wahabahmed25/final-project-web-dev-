@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, notFound } from "next/navigation";
+import { useParams, useRouter, notFound } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import {
   getRecommendationById,
   upvoteRecommendation,
   downvoteRecommendation,
+  deleteRecommendation,
   getComments,
   addComment,
   type Comment,
@@ -16,6 +17,8 @@ import {
 import { getCategoryLabel, getCategoryIcon, getCategoryAccent } from "@/data/categories";
 import { DetailSkeleton } from "@/components/LoadingSkeleton";
 import VoteEffect from "@/components/VoteEffect";
+import ShareButton from "@/components/ShareButton";
+import BookmarkButton from "@/components/BookmarkButton";
 import type { Recommendation } from "@/types/recommendation";
 
 function StarDisplay({ rating }: { rating: number }) {
@@ -33,6 +36,7 @@ function StarDisplay({ rating }: { rating: number }) {
 export default function RecommendationDetailPage() {
   const params = useParams();
   const id = String(params.id);
+  const router = useRouter();
   const { user } = useAuth();
   const { showToast } = useToast();
 
@@ -42,6 +46,7 @@ export default function RecommendationDetailPage() {
   const [downvoting, setDownvoting] = useState(false);
   const [upvoteAnim, setUpvoteAnim] = useState(false);
   const [downvoteAnim, setDownvoteAnim] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
   const [comments, setComments] = useState<Comment[]>([]);
@@ -110,6 +115,19 @@ export default function RecommendationDetailPage() {
       showToast("Could not downvote right now.", "error");
     } finally {
       setDownvoting(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!recommendation) return;
+    if (!confirm(`Delete "${recommendation.title}"? This cannot be undone.`)) return;
+    try {
+      setDeleting(true);
+      await deleteRecommendation(recommendation.id);
+      router.replace("/recommendations");
+    } catch {
+      showToast("Could not delete. Please try again.", "error");
+      setDeleting(false);
     }
   }
 
@@ -237,9 +255,15 @@ export default function RecommendationDetailPage() {
           <h2 style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-faint)", marginBottom: "0.5rem" }}>
             Location
           </h2>
-          <p style={{ fontSize: "0.9375rem", color: "var(--foreground)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            📍 {recommendation.location}
-          </p>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(recommendation.location + " Hunter College New York")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: "0.9375rem", color: "var(--hunter-purple)", display: "inline-flex", alignItems: "center", gap: "0.4rem", textDecoration: "none", fontWeight: 500 }}
+          >
+            📍 <span style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>{recommendation.location}</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>↗ Maps</span>
+          </a>
         </div>
 
         {/* Tags */}
@@ -259,6 +283,30 @@ export default function RecommendationDetailPage() {
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Owner controls */}
+        {user && user.uid === recommendation.createdBy && (
+          <div style={{ display: "flex", gap: "0.625rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
+            <Link
+              href={`/recommendation/${recommendation.id}/edit`}
+              className="btn btn-outline"
+              style={{ padding: "0.45rem 1rem", fontSize: "0.82rem", gap: "0.35rem" }}
+            >
+              ✏️ Edit
+            </Link>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              style={{
+                padding: "0.45rem 1rem", fontSize: "0.82rem", fontWeight: 600,
+                borderRadius: "100px", border: "1.5px solid #FECACA",
+                background: "transparent", color: "var(--error)", cursor: "pointer",
+              }}
+            >
+              {deleting ? "Deleting..." : "🗑 Delete"}
+            </button>
           </div>
         )}
 
@@ -306,6 +354,12 @@ export default function RecommendationDetailPage() {
               </span>
             </div>
           )}
+
+          {/* Share + Bookmark */}
+          <div style={{ display: "flex", gap: "0.625rem", marginTop: "1rem", flexWrap: "wrap" }}>
+            <ShareButton title={recommendation.title} />
+            <BookmarkButton recommendationId={recommendation.id} />
+          </div>
         </div>
       </article>
 

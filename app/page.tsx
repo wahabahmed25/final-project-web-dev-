@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
 import PinStringWeb from "@/components/PinStringWeb";
+import TrendingSection from "@/components/TrendingSection";
 import { categories } from "@/data/categories";
 
 export default function HomePage() {
@@ -108,6 +109,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Trending ───────────────────────────────────────────────── */}
+      <TrendingSection />
 
       {/* ── Categories ─────────────────────────────────────────────── */}
       <section style={{ padding: "4rem 1.5rem", position: "relative", zIndex: 1 }}>

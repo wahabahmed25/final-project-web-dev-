@@ -138,6 +138,34 @@ export async function deleteRecommendation(id: string) {
   await deleteDoc(ref);
 }
 
+export type UpdateRecommendationInput = {
+  title?: string;
+  description?: string;
+  location?: string;
+  rating?: number;
+  tags?: string[];
+};
+
+export async function updateRecommendation(id: string, input: UpdateRecommendationInput) {
+  const ref = doc(db, "recommendations", id);
+  const updates: Record<string, unknown> = {};
+  if (input.title !== undefined) updates.title = input.title.trim();
+  if (input.description !== undefined) updates.description = input.description.trim();
+  if (input.location !== undefined) updates.location = input.location.trim();
+  if (input.rating !== undefined) updates.rating = input.rating;
+  if (input.tags !== undefined) updates.tags = input.tags.map((t) => t.trim().toLowerCase()).filter(Boolean);
+  await updateDoc(ref, updates);
+}
+
+export async function getTrendingRecommendations(limit = 6): Promise<Recommendation[]> {
+  const snapshot = await getDocs(recommendationsCollection);
+  const all = snapshot.docs.map((d) => convertDocToRecommendation(d.id, d.data()));
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const recent = all.filter((r) => (r.createdAt?.toMillis?.() ?? 0) >= sevenDaysAgo);
+  const pool = recent.length >= 2 ? recent : all;
+  return pool.sort((a, b) => b.upvotes - a.upvotes).slice(0, limit);
+}
+
 // ─── Comments ─────────────────────────────────────────────────────
 
 export async function getComments(recommendationId: string): Promise<Comment[]> {
