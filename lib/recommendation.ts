@@ -60,6 +60,7 @@ function convertDocToRecommendation(
     createdByName: String(data.createdByName ?? "Student"),
     createdAt: data.createdAt as Recommendation["createdAt"],
     upvotes: Number(data.upvotes ?? 0),
+    downvotes: Number(data.downvotes ?? 0),
   };
 }
 
@@ -125,6 +126,11 @@ export async function getRecommendationById(
 export async function upvoteRecommendation(id: string) {
   const ref = doc(db, "recommendations", id);
   await updateDoc(ref, { upvotes: increment(1) });
+}
+
+export async function downvoteRecommendation(id: string) {
+  const ref = doc(db, "recommendations", id);
+  await updateDoc(ref, { downvotes: increment(1) });
 }
 
 export async function deleteRecommendation(id: string) {

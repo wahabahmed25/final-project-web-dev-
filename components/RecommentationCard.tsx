@@ -70,6 +70,7 @@ export default function RecommendationCard({
 
         {/* Rating badge */}
         <div
+          className="rating-badge"
           style={{
             flexShrink: 0,
             background: "var(--hunter-gold-light)",
