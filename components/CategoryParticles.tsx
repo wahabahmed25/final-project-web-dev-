@@ -2,11 +2,11 @@
 import { useEffect, useRef } from "react";
 
 const CATEGORY_SYMBOLS: Record<string, string[]> = {
-  coffee:            ["☕", "🫘", "☕", "🫘", "☕", "🫘", "✨"],
-  bookstores:        ["📚", "📖", "📕", "📗", "📘", "📖", "📚"],
-  "study-spots":     ["💤", "Zzz", "A+", "😴", "Zzz", "A+", "💤"],
-  "school-resources":["✏️", "📏", "✏️", "📐", "🖊️", "📏", "✏️"],
-  food:              ["🍴", "🍕", "🥢", "🍔", "🌮", "🍴", "🍜"],
+  coffee:             ["☕", "🫘", "☕", "🫘", "☕", "🫘"],
+  bookstores:         ["📚", "📖", "📕", "📗", "📘", "📖"],
+  "study-spots":      ["💤", "Zzz", "A+", "😴", "Zzz", "A+"],
+  "school-resources": ["✏️", "📏", "📐", "🖊️", "📏", "✏️"],
+  food:               ["🍴", "🍕", "🥢", "🍔", "🌮", "🍜"],
 };
 
 export default function CategoryParticles({ category }: { category: string }) {
@@ -23,39 +23,47 @@ export default function CategoryParticles({ category }: { category: string }) {
       if (!pool) return;
       const el = document.createElement("span");
       const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-      const x = 5 + Math.random() * 90; // % across viewport
-      const startY = 60 + Math.random() * 35; // % down viewport (lower third-ish)
-      const size = 15 + Math.random() * 18;
-      const rot = (Math.random() - 0.5) * 40;
-      const duration = 2200 + Math.random() * 1200;
+
+      // Random position across the full viewport (% within the fixed container)
+      const x = 3 + Math.random() * 94;       // 3–97% horizontal
+      const startY = 65 + Math.random() * 30; // 65–95% vertical (lower screen)
+      const size = 18 + Math.random() * 20;
+      const rot = (Math.random() - 0.5) * 45;
+      const dur = 2400 + Math.random() * 1200;
 
       el.textContent = symbol;
       el.style.cssText = `
-        position: fixed;
-        left: ${x}vw;
-        top: ${startY}vh;
+        position: absolute;
+        left: ${x}%;
+        top: ${startY}%;
         font-size: ${size}px;
+        line-height: 1;
         pointer-events: none;
         user-select: none;
-        z-index: 9;
         --rot: ${rot}deg;
-        animation: cat-float ${duration}ms ease-out forwards;
+        animation: cat-float ${dur}ms ease-out forwards;
       `;
       pool.appendChild(el);
-      setTimeout(() => el.remove(), duration + 50);
+      setTimeout(() => el.remove(), dur + 60);
     }
 
-    // Scatter a few staggered initial particles
-    for (let i = 0; i < 4; i++) setTimeout(spawn, i * 350);
+    // Scatter initial burst
+    for (let i = 0; i < 5; i++) setTimeout(spawn, i * 300);
 
-    const iv = setInterval(spawn, 1400);
+    const iv = setInterval(spawn, 1300);
     return () => clearInterval(iv);
   }, [category]);
 
   return (
     <div
       ref={containerRef}
-      style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 9 }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 5000,
+        overflow: "hidden",
+      }}
       aria-hidden
     />
   );

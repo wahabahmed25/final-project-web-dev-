@@ -106,7 +106,11 @@ button,input,textarea,select { font: inherit; }
 /* ─── Cards ────────────────────────────────────────────────────── */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
 .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
-.card-hover:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--hunter-purple-light); }
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.35), 0 0 18px rgba(59,130,246,0.28), 0 0 40px rgba(59,130,246,0.12), var(--shadow-md);
+  border-color: rgba(59,130,246,0.55);
+}
 
 /* ─── Inputs ───────────────────────────────────────────────────── */
 .input {
@@ -229,19 +233,14 @@ button,input,textarea,select { font: inherit; }
 
 /* Login page — campus/academic photo */
 .page-login {
-  background-image:
-    linear-gradient(rgba(247,243,252,0.72), rgba(247,243,252,0.72)),
-    url('/category-bg/login-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: local;
+  background:
+    linear-gradient(rgba(247,243,252,0.68), rgba(247,243,252,0.68)),
+    url('/category-bg/login-bg.jpg') center / cover !important;
 }
 .dark .page-login {
-  background-image:
-    linear-gradient(rgba(8,3,18,0.82), rgba(8,3,18,0.82)),
-    url('/category-bg/login-bg.jpg');
-  background-size: cover;
-  background-position: center;
+  background:
+    linear-gradient(rgba(8,3,18,0.62), rgba(8,3,18,0.62)),
+    url('/category-bg/login-bg.jpg') center / cover !important;
 }
 
 /* Add-recommendation page — pencil/paper symbols */
@@ -599,10 +598,10 @@ button,input,textarea,select { font: inherit; }
 
 /* ─── Category Ambient Particles ─────────────────────────────── */
 @keyframes cat-float {
-  0%   { opacity: 0; transform: translateY(0)     rotate(0deg)              scale(0.8); }
-  15%  { opacity: 0.85; }
-  85%  { opacity: 0.6; }
-  100% { opacity: 0; transform: translateY(-130px) rotate(var(--rot, 18deg)) scale(0.35); }
+  0%   { opacity: 0;    transform: translateY(0px)    rotate(0deg)               scale(0.7); }
+  12%  { opacity: 1; }
+  80%  { opacity: 0.75; }
+  100% { opacity: 0;    transform: translateY(-180px) rotate(var(--rot, 20deg))  scale(0.3); }
 }
 
 /* ─── Login Page Glow Orb ─────────────────────────────────────── */
