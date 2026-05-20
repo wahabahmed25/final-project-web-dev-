@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { ThemeProvider } from "next-themes";
+import CursorParticles from "@/components/CursorParticles";
 
 const caveat = Caveat({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <ToastProvider>
+              <CursorParticles />
               <Navbar />
               <main style={{ flex: 1, position: "relative", zIndex: 1 }}>{children}</main>
               <Footer />
