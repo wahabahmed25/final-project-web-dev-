@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import RecommendationCard from "@/components/RecommentationCard";
 import SearchInput from "@/components/SearchInput";
+import ShuffleModal from "@/components/ShuffleModal";
 import { RecommendationCardSkeleton } from "@/components/LoadingSkeleton";
 import { categories } from "@/data/categories";
 import { getAllRecommendations } from "@/lib/recommendation";
@@ -24,6 +25,7 @@ export default function RecommendationsPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [shufflePick, setShufflePick] = useState<Recommendation | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -43,12 +45,10 @@ export default function RecommendationsPage() {
   const filtered = useMemo(() => {
     let list = [...recommendations];
 
-    // Category filter
     if (activeCategory !== "all") {
       list = list.filter((r) => r.category === activeCategory);
     }
 
-    // Search
     const term = search.toLowerCase().trim();
     if (term) {
       list = list.filter((r) =>
@@ -59,22 +59,15 @@ export default function RecommendationsPage() {
       );
     }
 
-    // Sort
     switch (sort) {
-      case "top-rated":
-        list.sort((a, b) => b.rating - a.rating);
-        break;
-      case "popular":
-        list.sort((a, b) => b.upvotes - a.upvotes);
-        break;
-      default: // newest
-        list.sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+      case "top-rated": list.sort((a, b) => b.rating - a.rating); break;
+      case "popular":   list.sort((a, b) => b.upvotes - a.upvotes); break;
+      default:          list.sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
     }
 
     return list;
   }, [recommendations, search, sort, activeCategory]);
 
-  // rank by net score (upvotes - downvotes) within current filtered list
   const rankedIds = useMemo(() => {
     const sorted = [...filtered].sort((a, b) => (b.upvotes - (b.downvotes ?? 0)) - (a.upvotes - (a.downvotes ?? 0)));
     const map = new Map<string, number>();
@@ -82,43 +75,73 @@ export default function RecommendationsPage() {
     return map;
   }, [filtered]);
 
+  function handleShuffle() {
+    if (filtered.length === 0) return;
+    const pick = filtered[Math.floor(Math.random() * filtered.length)];
+    setShufflePick(pick);
+  }
+
+  function handleShuffleAgain() {
+    if (filtered.length === 0) return;
+    let pick = filtered[Math.floor(Math.random() * filtered.length)];
+    // avoid same pick if possible
+    if (filtered.length > 1 && pick.id === shufflePick?.id) {
+      pick = filtered[(filtered.indexOf(pick) + 1) % filtered.length];
+    }
+    setShufflePick(pick);
+  }
+
+  // Dynamic background: use category photo bg when a single category is filtered
+  const bgClass = activeCategory !== "all"
+    ? `page-recs page-cat-${activeCategory}`
+    : "page-recs";
+
   return (
-    <div className="page-recs" style={{ minHeight: "100vh" }}>
+    <div className={bgClass} style={{ minHeight: "100vh" }}>
+      {shufflePick && (
+        <ShuffleModal
+          recommendation={shufflePick}
+          onClose={() => setShufflePick(null)}
+          onShuffle={handleShuffleAgain}
+        />
+      )}
+
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
 
         {/* Header */}
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem", marginBottom: "2rem" }}>
           <div>
-            <span
-              style={{
-                display: "block",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                color: "var(--hunter-gold-dark)",
-                marginBottom: "0.375rem",
-              }}
-            >
+            <span style={{
+              display: "block", fontSize: "0.75rem", fontWeight: 700,
+              textTransform: "uppercase", letterSpacing: "0.08em",
+              color: "var(--hunter-gold-dark)", marginBottom: "0.375rem",
+            }}>
               ✦ Browse
             </span>
-            <h1
-              style={{
-                fontFamily: "'DM Serif Display', serif",
-                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                color: "var(--foreground)",
-                margin: 0,
-              }}
-            >
+            <h1 style={{
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+              color: "var(--foreground)", margin: 0,
+            }}>
               All Recommendations
             </h1>
             <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>
               Student picks for the best spots near Hunter.
             </p>
           </div>
-          <Link href="/add-recommendation" className="btn btn-purple">
-            + Add Recommendation
-          </Link>
+          <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={handleShuffle}
+              disabled={filtered.length === 0}
+              className="btn btn-gold"
+              style={{ gap: "0.5rem" }}
+            >
+              🎲 Pick for me
+            </button>
+            <Link href="/add-recommendation" className="btn btn-purple">
+              + Add Recommendation
+            </Link>
+          </div>
         </div>
 
         {/* Search */}
@@ -151,16 +174,12 @@ export default function RecommendationsPage() {
               key={opt.value}
               onClick={() => setSort(opt.value)}
               style={{
-                padding: "0.35rem 0.875rem",
-                borderRadius: "100px",
+                padding: "0.35rem 0.875rem", borderRadius: "100px",
                 border: "1.5px solid",
                 borderColor: sort === opt.value ? "var(--hunter-purple)" : "var(--border)",
                 background: sort === opt.value ? "var(--hunter-purple)" : "var(--surface)",
                 color: sort === opt.value ? "#fff" : "var(--text-muted)",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                transition: "all 0.15s",
+                fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", transition: "all 0.15s",
               }}
             >
               {opt.label}

@@ -574,3 +574,9 @@ button,input,textarea,select { font: inherit; }
   0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% - 48px)) scale(0.15); }
 }
+
+/* ─── Shuffle Modal Animation ─────────────────────────────────── */
+@keyframes shuffle-pop {
+  0%   { opacity: 0; transform: scale(0.7) rotate(-4deg); }
+  100% { opacity: 1; transform: scale(1)   rotate(0deg);  }
+}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import RecommendationCard from "@/components/RecommentationCard";
 import SearchInput from "@/components/SearchInput";
+import ShuffleModal from "@/components/ShuffleModal";
 import NearbyPlacesSection from "@/components/NearbyPlacesSection";
 import { RecommendationCardSkeleton } from "@/components/LoadingSkeleton";
 import { categories, getCategoryLabel, getCategoryIcon, getCategoryAccent, isValidCategory } from "@/data/categories";
@@ -29,6 +30,7 @@ export default function CategoryRecommendationsPage() {
   const [sort, setSort] = useState<SortOption>("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [shufflePick, setShufflePick] = useState<Recommendation | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -70,8 +72,29 @@ export default function CategoryRecommendationsPage() {
     return map;
   }, [filtered]);
 
+  function handleShuffle() {
+    if (filtered.length === 0) return;
+    setShufflePick(filtered[Math.floor(Math.random() * filtered.length)]);
+  }
+
+  function handleShuffleAgain() {
+    if (filtered.length === 0) return;
+    let pick = filtered[Math.floor(Math.random() * filtered.length)];
+    if (filtered.length > 1 && pick.id === shufflePick?.id) {
+      pick = filtered[(filtered.indexOf(pick) + 1) % filtered.length];
+    }
+    setShufflePick(pick);
+  }
+
   return (
     <div className={`page-cat-${category}`} style={{ minHeight: "100vh", position: "relative" }}>
+      {shufflePick && (
+        <ShuffleModal
+          recommendation={shufflePick}
+          onClose={() => setShufflePick(null)}
+          onShuffle={handleShuffleAgain}
+        />
+      )}
       {/* Category hero */}
       <div
         style={{
@@ -119,9 +142,19 @@ export default function CategoryRecommendationsPage() {
                 {catData?.description}
               </p>
             </div>
-            <Link href="/add-recommendation" className="btn btn-purple">
-              + Add Recommendation
-            </Link>
+            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              <button
+                onClick={handleShuffle}
+                disabled={filtered.length === 0}
+                className="btn btn-gold"
+                style={{ gap: "0.5rem" }}
+              >
+                🎲 Pick for me
+              </button>
+              <Link href="/add-recommendation" className="btn btn-purple">
+                + Add Recommendation
+              </Link>
+            </div>
           </div>
         </div>
       </div>
