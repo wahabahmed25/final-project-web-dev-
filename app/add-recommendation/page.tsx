@@ -1,70 +1,83 @@
-"use client";
-
-import Link from "next/link";
 import RecommendationForm from "@/components/RecommendationForm";
-import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function AddRecommendationPage() {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="corkboard cat-bg-add min-h-screen flex items-start justify-center px-4 py-16">
-        <div
-          className="sticky-note note-yellow w-full max-w-3xl p-6 mt-6 text-sm"
-          style={{ color: "var(--fg-secondary)" }}
-        >
-          Checking login status...
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="corkboard cat-bg-add min-h-screen flex items-start justify-center px-4 py-16">
-        <div className="sticky-note note-pink w-full max-w-3xl p-10 text-center mt-6">
-          <h1
-            className="text-3xl font-extrabold"
-            style={{ color: "var(--fg-primary)" }}
-          >
-            Login required
-          </h1>
-          <p className="mt-3 text-sm" style={{ color: "var(--fg-secondary)" }}>
-            You need to log in before adding a recommendation.
-          </p>
-          <Link href="/login" className="btn-purple mt-6 glow-sm">
-            Go to Login
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="corkboard cat-bg-add min-h-screen px-4 py-16">
-      <div className="mx-auto max-w-3xl">
-        {/* Header note */}
-        <div className="sticky-note note-mint p-8 mb-10 mt-6">
-          <p
-            className="text-xs font-bold uppercase tracking-widest mb-2"
-            style={{ color: "var(--purple)" }}
+    <div style={{ minHeight: "calc(100vh - 4rem)", padding: "2.5rem 1.5rem" }}>
+      <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        {/* Back */}
+        <Link
+          href="/recommendations"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.375rem",
+            fontSize: "0.875rem",
+            fontWeight: 600,
+            color: "var(--hunter-purple)",
+            textDecoration: "none",
+            marginBottom: "1.5rem",
+          }}
+        >
+          ← Back to recommendations
+        </Link>
+
+        {/* Header */}
+        <div style={{ marginBottom: "2rem" }}>
+          <span
+            style={{
+              display: "inline-block",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "var(--hunter-gold-dark)",
+              marginBottom: "0.375rem",
+            }}
           >
-            Share with students
-          </p>
+            ✦ Share with the community
+          </span>
           <h1
-            className="text-4xl font-extrabold"
-            style={{ color: "var(--fg-primary)" }}
+            style={{
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: "clamp(2rem, 5vw, 2.75rem)",
+              color: "var(--foreground)",
+              margin: "0 0 0.5rem",
+            }}
           >
             Add a Recommendation
           </h1>
-          <p className="mt-2 text-sm leading-6" style={{ color: "var(--fg-secondary)" }}>
-            Add a helpful place or resource for other Hunter students.
+          <p style={{ fontSize: "0.9375rem", color: "var(--text-muted)", lineHeight: 1.7 }}>
+            Know a great study spot, meal, or resource? Tell your fellow students about it.
           </p>
         </div>
 
+        {/* Tips */}
+        <div
+          style={{
+            background: "var(--hunter-purple-faint)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--radius-xl)",
+            padding: "1.25rem 1.5rem",
+            marginBottom: "1.5rem",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+            gap: "0.875rem",
+          }}
+        >
+          {[
+            { icon: "🎯", tip: "Be specific, a precise location helps." },
+            { icon: "⭐", tip: "Honest ratings are more useful than perfect ones." },
+            { icon: "🏷️", tip: "Tags help others discover your pick." },
+          ].map((item) => (
+            <div key={item.icon} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+              <span style={{ fontSize: "1rem", flexShrink: 0, marginTop: "1px" }}>{item.icon}</span>
+              <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.55 }}>{item.tip}</span>
+            </div>
+          ))}
+        </div>
+
         <RecommendationForm />
-        <div className="pb-16" />
       </div>
     </div>
   );

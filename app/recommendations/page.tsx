@@ -4,147 +4,203 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import RecommendationCard from "@/components/RecommentationCard";
 import SearchInput from "@/components/SearchInput";
+import { RecommendationCardSkeleton } from "@/components/LoadingSkeleton";
 import { categories } from "@/data/categories";
 import { getAllRecommendations } from "@/lib/recommendation";
 import type { Recommendation } from "@/types/recommendation";
 
+type SortOption = "newest" | "top-rated" | "popular";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "newest",    label: "Newest" },
+  { value: "top-rated", label: "Top Rated" },
+  { value: "popular",   label: "Most Upvoted" },
+];
+
 export default function RecommendationsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortOption>("newest");
+  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadRecommendations() {
+    async function load() {
       try {
         setLoading(true);
         const data = await getAllRecommendations();
         setRecommendations(data);
-      } catch (err) {
-        console.error(err);
+      } catch {
         setError("Could not load recommendations.");
       } finally {
         setLoading(false);
       }
     }
-    loadRecommendations();
+    load();
   }, []);
 
-  const filteredRecommendations = useMemo(() => {
+  const filtered = useMemo(() => {
+    let list = [...recommendations];
+
+    // Category filter
+    if (activeCategory !== "all") {
+      list = list.filter((r) => r.category === activeCategory);
+    }
+
+    // Search
     const term = search.toLowerCase().trim();
-    if (!term) return recommendations;
-    return recommendations.filter((item) =>
-      [item.title, item.description, item.location, item.category, ...item.tags]
-        .join(" ")
-        .toLowerCase()
-        .includes(term)
-    );
-  }, [recommendations, search]);
+    if (term) {
+      list = list.filter((r) =>
+        [r.title, r.description, r.location, r.category, ...r.tags]
+          .join(" ")
+          .toLowerCase()
+          .includes(term)
+      );
+    }
+
+    // Sort
+    switch (sort) {
+      case "top-rated":
+        list.sort((a, b) => b.rating - a.rating);
+        break;
+      case "popular":
+        list.sort((a, b) => b.upvotes - a.upvotes);
+        break;
+      default: // newest
+        list.sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+    }
+
+    return list;
+  }, [recommendations, search, sort, activeCategory]);
 
   return (
-    <div className="corkboard min-h-screen cat-bg-recommendations">
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        {/* Header note */}
-        <div
-          className="sticky-note note-pink p-8 mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between mt-6"
-        >
+    <div style={{ minHeight: "100vh" }}>
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+
+        {/* Header */}
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem", marginBottom: "2rem" }}>
           <div>
-            <p
-              className="text-xs font-bold uppercase tracking-widest mb-2"
-              style={{ color: "var(--purple)" }}
+            <span
+              style={{
+                display: "block",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--hunter-gold-dark)",
+                marginBottom: "0.375rem",
+              }}
             >
-              Browse
-            </p>
+              ✦ Browse
+            </span>
             <h1
-              className="text-4xl font-extrabold"
-              style={{ color: "var(--fg-primary)" }}
+              style={{
+                fontFamily: "'DM Serif Display', serif",
+                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                color: "var(--foreground)",
+                margin: 0,
+              }}
             >
               All Recommendations
             </h1>
-            <p
-              className="mt-2 max-w-xl text-sm leading-6"
-              style={{ color: "var(--fg-secondary)" }}
-            >
-              Search student recommendations for useful places and resources on
-              or near Hunter.
+            <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>
+              Student picks for the best spots near Hunter.
             </p>
           </div>
-          <Link href="/add-recommendation" className="btn-purple shrink-0 glow-sm">
+          <Link href="/add-recommendation" className="btn btn-purple">
             + Add Recommendation
           </Link>
         </div>
 
         {/* Search */}
-        <div className="mb-6">
-          <SearchInput value={search} onChange={setSearch} />
-        </div>
+        <SearchInput value={search} onChange={setSearch} />
 
         {/* Category pills */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map((category) => (
-            <Link
-              key={category.value}
-              href={`/recommendations/${category.value}`}
-              className="sticky-note rounded-full px-4 py-2 text-xs font-bold transition-all"
-              style={{ color: "var(--fg-secondary)" }}
+        <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          <button
+            className={`tag${activeCategory === "all" ? " active" : ""}`}
+            onClick={() => setActiveCategory("all")}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.value}
+              className={`tag${activeCategory === cat.value ? " active" : ""}`}
+              onClick={() => setActiveCategory(activeCategory === cat.value ? "all" : cat.value)}
             >
-              {category.label}
-            </Link>
+              {cat.icon} {cat.label}
+            </button>
           ))}
         </div>
 
-        {/* States */}
-        {loading && (
-          <div
-            className="sticky-note note-yellow p-6 text-sm mt-6"
-            style={{ color: "var(--fg-secondary)" }}
-          >
-            Loading recommendations...
-          </div>
-        )}
-
-        {error && (
-          <div
-            className="sticky-note mt-6 p-6 text-sm"
-            style={{
-              background: "var(--note-pink)",
-              color: "var(--fg-primary)",
-            }}
-          >
-            {error}
-          </div>
-        )}
-
-        {!loading && !error && filteredRecommendations.length === 0 && (
-          <div className="sticky-note note-lavender mt-6 p-10 text-center">
-            <h2
-              className="text-lg font-bold"
-              style={{ color: "var(--fg-primary)" }}
+        {/* Sort */}
+        <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-faint)" }}>Sort:</span>
+          {SORT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSort(opt.value)}
+              style={{
+                padding: "0.35rem 0.875rem",
+                borderRadius: "100px",
+                border: "1.5px solid",
+                borderColor: sort === opt.value ? "var(--hunter-purple)" : "var(--border)",
+                background: sort === opt.value ? "var(--hunter-purple)" : "var(--surface)",
+                color: sort === opt.value ? "#fff" : "var(--text-muted)",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
             >
-              No recommendations found
-            </h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--fg-secondary)" }}>
-              Try a different search or add the first recommendation.
-            </p>
-          </div>
-        )}
+              {opt.label}
+            </button>
+          ))}
 
-        {!loading && !error && filteredRecommendations.length > 0 && (() => {
-          const maxUpvotes = recommendations.reduce((m, r) => Math.max(m, r.upvotes), 0);
-          return (
-            <div className="sticky-grid mt-10 grid gap-8 pt-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredRecommendations.map((recommendation) => (
-                <RecommendationCard
-                  key={recommendation.id}
-                  recommendation={recommendation}
-                  isTop={maxUpvotes > 0 && recommendation.upvotes === maxUpvotes}
-                />
-              ))}
+          {!loading && (
+            <span style={{ marginLeft: "auto", fontSize: "0.8rem", color: "var(--text-faint)" }}>
+              {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+
+        {/* Results */}
+        <div style={{ marginTop: "1.75rem" }}>
+          {loading && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+              {Array.from({ length: 6 }).map((_, i) => <RecommendationCardSkeleton key={i} />)}
             </div>
-          );
-        })()}
+          )}
 
-        <div className="pb-16" />
+          {error && (
+            <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: "var(--radius-lg)", padding: "1rem 1.25rem", color: "var(--error)", fontSize: "0.9rem" }}>
+              {error}
+            </div>
+          )}
+
+          {!loading && !error && filtered.length === 0 && (
+            <div className="card" style={{ padding: "3rem", textAlign: "center" }}>
+              <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "1rem" }}>🔍</span>
+              <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.375rem", color: "var(--foreground)", marginBottom: "0.5rem" }}>
+                No recommendations found
+              </h2>
+              <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "1.5rem" }}>
+                {search ? "Try a different search term." : "Be the first to add one!"}
+              </p>
+              <Link href="/add-recommendation" className="btn btn-purple">
+                Add Recommendation
+              </Link>
+            </div>
+          )}
+
+          {!loading && !error && filtered.length > 0 && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+              {filtered.map((r) => <RecommendationCard key={r.id} recommendation={r} />)}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

@@ -1,86 +1,140 @@
 import Link from "next/link";
-import { getCategoryLabel } from "@/data/categories";
+import { getCategoryLabel, getCategoryIcon, getCategoryAccent } from "@/data/categories";
 import type { Recommendation } from "@/types/recommendation";
+
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <div style={{ display: "flex", gap: "1px", alignItems: "center" }}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <span
+          key={n}
+          style={{
+            fontSize: "0.7rem",
+            color: n <= rating ? "var(--hunter-gold)" : "var(--border)",
+          }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function RecommendationCard({
   recommendation,
-  isTop = false,
 }: {
   recommendation: Recommendation;
-  isTop?: boolean;
 }) {
-  const isTorn = !isTop && recommendation.rating <= 2;
+  const accent = getCategoryAccent(recommendation.category);
+  const icon = getCategoryIcon(recommendation.category);
 
   return (
     <Link
       href={`/recommendation/${recommendation.id}`}
-      className={`block sticky-note p-5 ${isTop ? "note-golden" : ""} ${isTorn ? "note-torn" : ""}`}
+      className="card card-hover"
+      style={{
+        display: "block",
+        padding: "1.25rem",
+        textDecoration: "none",
+      }}
     >
-      {isTop && (
-        <div
-          className="absolute -top-3 -right-2 z-10 rounded-full px-2 py-0.5 text-xs font-bold shadow-md"
-          style={{ background: "#f59e0b", color: "#fff" }}
-        >
-          🏆 Top Pick
-        </div>
-      )}
-      {isTorn && (
-        <div
-          className="absolute -top-3 -right-2 z-10 rounded-full px-2 py-0.5 text-xs font-bold shadow-md"
-          style={{ background: "#f43f5e", color: "#fff" }}
-        >
-          😬 Rough
-        </div>
-      )}
-
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p
-            className="text-xs font-bold uppercase tracking-wide"
-            style={{ color: "var(--purple)" }}
-          >
-            {getCategoryLabel(recommendation.category)}
-          </p>
-
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.75rem" }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", marginBottom: "0.3rem" }}>
+            <span style={{ fontSize: "0.8rem" }}>{icon}</span>
+            <span
+              style={{
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                color: accent,
+              }}
+            >
+              {getCategoryLabel(recommendation.category)}
+            </span>
+          </div>
           <h3
-            className="mt-1 text-xl font-bold font-fun"
-            style={{ color: "var(--fg-primary)" }}
+            style={{
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: "1.0625rem",
+              color: "var(--foreground)",
+              lineHeight: 1.3,
+            }}
+            className="line-clamp-2"
           >
             {recommendation.title}
           </h3>
         </div>
 
+        {/* Rating badge */}
         <div
-          className="shrink-0 rounded-full px-3 py-1 text-sm font-bold"
           style={{
-            background: "var(--note-yellow)",
-            color: "var(--fg-primary)",
+            flexShrink: 0,
+            background: "var(--hunter-gold-light)",
+            border: "1px solid rgba(238,177,17,0.25)",
+            borderRadius: "100px",
+            padding: "0.2rem 0.625rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.3rem",
           }}
         >
-          ⭐ {recommendation.rating}/5
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--hunter-gold-dark)" }}>
+            {recommendation.rating}
+          </span>
+          <span style={{ fontSize: "0.65rem", color: "var(--hunter-gold)" }}>★</span>
         </div>
       </div>
 
+      {/* Stars */}
+      <div style={{ marginTop: "0.5rem" }}>
+        <StarRating rating={recommendation.rating} />
+      </div>
+
+      {/* Description */}
       <p
-        className="mt-3 line-clamp-2 text-sm leading-6"
-        style={{ color: "var(--fg-secondary)" }}
+        className="line-clamp-2"
+        style={{
+          marginTop: "0.625rem",
+          fontSize: "0.8375rem",
+          color: "var(--text-muted)",
+          lineHeight: 1.6,
+        }}
       >
         {recommendation.description}
       </p>
 
-      <p className="mt-3 text-sm" style={{ color: "var(--fg-muted)" }}>
-        📍 {recommendation.location}
+      {/* Location */}
+      <p
+        style={{
+          marginTop: "0.625rem",
+          fontSize: "0.8rem",
+          color: "var(--text-faint)",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.25rem",
+        }}
+      >
+        <span>📍</span>
+        {recommendation.location}
       </p>
 
+      {/* Tags */}
       {recommendation.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
           {recommendation.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="rounded-full px-3 py-1 text-xs font-semibold"
               style={{
-                background: "var(--purple-light)",
-                color: "var(--purple)",
+                padding: "0.2rem 0.625rem",
+                borderRadius: "100px",
+                fontSize: "0.7rem",
+                fontWeight: 500,
+                background: "var(--hunter-purple-faint)",
+                color: "var(--hunter-purple)",
+                border: "1px solid var(--border-light)",
               }}
             >
               #{tag}
@@ -89,23 +143,31 @@ export default function RecommendationCard({
         </div>
       )}
 
+      {/* Footer */}
       <div
-        className="mt-4 flex items-center justify-between border-t pt-4 text-xs"
         style={{
-          borderColor: "var(--border)",
-          color: "var(--fg-muted)",
+          marginTop: "1rem",
+          paddingTop: "0.75rem",
+          borderTop: "1px solid var(--border-light)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <span>By {recommendation.createdByName}</span>
-        <span className="flex items-center gap-2">
-          <span style={{ color: isTop ? "#f59e0b" : "var(--purple)", fontWeight: 600 }}>
-            {isTop ? "✨ " : ""}👍 {recommendation.upvotes}
-          </span>
-          {(recommendation.downvotes ?? 0) > 0 && (
-            <span style={{ color: "#f43f5e", fontWeight: 600 }}>
-              👎 {recommendation.downvotes}
-            </span>
-          )}
+        <span style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>
+          by {recommendation.createdByName}
+        </span>
+        <span
+          style={{
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            color: "var(--hunter-purple)",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.25rem",
+          }}
+        >
+          ▲ {recommendation.upvotes}
         </span>
       </div>
     </Link>

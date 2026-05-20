@@ -2,44 +2,103 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { categories } from "@/data/categories";
+import { categories, getCategoryTags } from "@/data/categories";
 import { addRecommendation } from "@/lib/recommendation";
 import type { RecommendationCategory } from "@/types/recommendation";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
+
+const TITLE_MAX = 80;
+const DESC_MAX = 500;
+
+function FieldError({ msg }: { msg: string }) {
+  if (!msg) return null;
+  return (
+    <p style={{ marginTop: "0.35rem", fontSize: "0.8rem", color: "var(--error)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+      ⚠ {msg}
+    </p>
+  );
+}
+
+function CharCount({ current, max }: { current: number; max: number }) {
+  const pct = current / max;
+  const color = pct > 0.9 ? "var(--error)" : pct > 0.75 ? "#D97706" : "var(--text-faint)";
+  return (
+    <span style={{ fontSize: "0.75rem", color, marginLeft: "auto" }}>
+      {current}/{max}
+    </span>
+  );
+}
 
 export default function RecommendationForm() {
   const router = useRouter();
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<RecommendationCategory>("study-spots");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [rating, setRating] = useState("5");
-  const [tags, setTags] = useState("");
-  const [error, setError] = useState("");
+  const [rating, setRating] = useState(5);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
+  // Touched state for field-level validation
+  const [touched, setTouched] = useState({
+    title: false,
+    description: false,
+    location: false,
+  });
+
+  const errors = {
+    title:
+      !title.trim()
+        ? "Title is required."
+        : title.length > TITLE_MAX
+        ? `Title must be ${TITLE_MAX} characters or fewer.`
+        : "",
+    description:
+      !description.trim()
+        ? "Description is required."
+        : description.length > DESC_MAX
+        ? `Description must be ${DESC_MAX} characters or fewer.`
+        : "",
+    location: !location.trim() ? "Location is required." : "",
+  };
+
+  const isValid = !errors.title && !errors.description && !errors.location;
+
+  const suggestedTags = getCategoryTags(category);
+
+  function toggleTag(tag: string) {
+    setTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }
+
+  function handleTagInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const val = tagInput.trim().toLowerCase().replace(/^#/, "");
+      if (val && !tags.includes(val)) setTags((prev) => [...prev, val]);
+      setTagInput("");
+    }
+    if (e.key === "Backspace" && !tagInput && tags.length > 0) {
+      setTags((prev) => prev.slice(0, -1));
+    }
+  }
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setTouched({ title: true, description: true, location: true });
 
     if (!user) {
-      setError("You must be logged in to add a recommendation.");
+      showToast("You must be logged in to add a recommendation.", "error");
       return;
     }
 
-    if (!title.trim() || !description.trim() || !location.trim()) {
-      setError("Please fill out all required fields.");
-      return;
-    }
-
-    const numericRating = Number(rating);
-
-    if (Number.isNaN(numericRating) || numericRating < 1 || numericRating > 5) {
-      setError("Rating must be between 1 and 5.");
-      return;
-    }
+    if (!isValid) return;
 
     try {
       setIsSubmitting(true);
@@ -48,152 +107,234 @@ export default function RecommendationForm() {
         category,
         description,
         location,
-        rating: numericRating,
-        tags: tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean),
+        rating,
+        tags,
         createdBy: user.uid,
         createdByName: user.displayName || user.email || "Student",
       });
+      showToast("Recommendation added successfully! 🎉", "success");
       router.push("/recommendations");
     } catch (err) {
       console.error(err);
-      setError("Something went wrong while saving your recommendation.");
+      showToast("Something went wrong. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="sticky-note note-lavender p-8"
-    >
-      {error && (
-        <div
-          className="mb-6 rounded-2xl px-4 py-3 text-sm font-semibold"
-          style={{
-            background: "var(--note-pink)",
-            color: "var(--fg-primary)",
-            border: "1.5px solid var(--border-hover)",
-          }}
-        >
-          {error}
-        </div>
-      )}
+    <form onSubmit={handleSubmit} className="card" style={{ padding: "2rem" }} noValidate>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
-      <div className="grid gap-5">
-        {[
-          {
-            label: "Recommendation Name",
-            type: "text" as const,
-            value: title,
-            onChange: setTitle,
-            placeholder: "Example: Hunter Library 3rd Floor",
-          },
-          {
-            label: "Location",
-            type: "text" as const,
-            value: location,
-            onChange: setLocation,
-            placeholder: "Example: Hunter East, 3rd Floor",
-          },
-          {
-            label: "Tags",
-            type: "text" as const,
-            value: tags,
-            onChange: setTags,
-            placeholder: "Example: quiet, wifi, cheap, on-campus",
-            hint: "Separate tags with commas.",
-          },
-        ].map(({ label, type, value, onChange, placeholder, hint }) => (
-          <div key={label}>
-            <label
-              className="mb-2 block text-sm font-bold"
-              style={{ color: "var(--fg-primary)" }}
-            >
-              {label}
-            </label>
-            <input
-              type={type}
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder={placeholder}
-              className="themed-input"
-            />
-            {hint && (
-              <p className="mt-1.5 text-xs" style={{ color: "var(--fg-muted)" }}>
-                {hint}
-              </p>
-            )}
-          </div>
-        ))}
-
+        {/* Title */}
         <div>
-          <label
-            className="mb-2 block text-sm font-bold"
-            style={{ color: "var(--fg-primary)" }}
-          >
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+            <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)" }}>
+              Name <span style={{ color: "var(--error)" }}>*</span>
+            </label>
+            <CharCount current={title.length} max={TITLE_MAX} />
+          </div>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
+            onBlur={() => setTouched((t) => ({ ...t, title: true }))}
+            placeholder="e.g. Hunter Library 3rd Floor"
+            className={`input${touched.title && errors.title ? " error-field" : ""}`}
+          />
+          {touched.title && <FieldError msg={errors.title} />}
+        </div>
+
+        {/* Category */}
+        <div>
+          <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)", marginBottom: "0.5rem" }}>
             Category
           </label>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as RecommendationCategory)}
-            className="themed-input"
+            onChange={(e) => { setCategory(e.target.value as RecommendationCategory); setTags([]); }}
+            className="input"
+            style={{ cursor: "pointer" }}
           >
             {categories.map((item) => (
               <option key={item.value} value={item.value}>
-                {item.label}
+                {item.icon} {item.label}
               </option>
             ))}
           </select>
         </div>
 
+        {/* Description */}
         <div>
-          <label
-            className="mb-2 block text-sm font-bold"
-            style={{ color: "var(--fg-primary)" }}
-          >
-            Description
-          </label>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+            <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)" }}>
+              Description <span style={{ color: "var(--error)" }}>*</span>
+            </label>
+            <CharCount current={description.length} max={DESC_MAX} />
+          </div>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Write a short useful description for other students."
-            rows={5}
-            className="themed-input resize-none"
+            onChange={(e) => setDescription(e.target.value.slice(0, DESC_MAX))}
+            onBlur={() => setTouched((t) => ({ ...t, description: true }))}
+            placeholder="Write a helpful description for other students."
+            rows={4}
+            className={`input${touched.description && errors.description ? " error-field" : ""}`}
+            style={{ resize: "vertical", minHeight: "6rem" }}
           />
+          {touched.description && <FieldError msg={errors.description} />}
         </div>
 
+        {/* Location */}
         <div>
-          <label
-            className="mb-2 block text-sm font-bold"
-            style={{ color: "var(--fg-primary)" }}
-          >
-            Rating
+          <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)", marginBottom: "0.5rem" }}>
+            Location <span style={{ color: "var(--error)" }}>*</span>
           </label>
-          <select
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            className="themed-input"
-          >
-            <option value="5">5 — Excellent</option>
-            <option value="4">4 — Good</option>
-            <option value="3">3 — Okay</option>
-            <option value="2">2 — Not great</option>
-            <option value="1">1 — Poor</option>
-          </select>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, location: true }))}
+            placeholder="e.g. Hunter East, 3rd Floor"
+            className={`input${touched.location && errors.location ? " error-field" : ""}`}
+          />
+          {touched.location && <FieldError msg={errors.location} />}
         </div>
 
+        {/* Star Rating */}
+        <div>
+          <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)", marginBottom: "0.5rem" }}>
+            Your Rating
+          </label>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                type="button"
+                className="star-btn"
+                onClick={() => setRating(n)}
+                aria-label={`Rate ${n} star${n !== 1 ? "s" : ""}`}
+              >
+                <span style={{ color: n <= rating ? "var(--hunter-gold)" : "var(--border)", transition: "color 0.15s" }}>
+                  ★
+                </span>
+              </button>
+            ))}
+            <span style={{ marginLeft: "0.5rem", fontSize: "0.825rem", color: "var(--text-muted)" }}>
+              {["", "Poor", "Not great", "Okay", "Good", "Excellent"][rating]}
+            </span>
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--foreground)", marginBottom: "0.5rem" }}>
+            Tags
+          </label>
+
+          {/* Suggested tags */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem", marginBottom: "0.75rem" }}>
+            {suggestedTags.map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`tag${tags.includes(t) ? " active" : ""}`}
+                onClick={() => toggleTag(t)}
+              >
+                {tags.includes(t) ? "✓ " : "+"} #{t}
+              </button>
+            ))}
+          </div>
+
+          {/* Selected tags display + custom input */}
+          <div
+            className="input"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "0.375rem",
+              alignItems: "center",
+              padding: "0.5rem 0.75rem",
+              minHeight: "3rem",
+              cursor: "text",
+            }}
+            onClick={(e) => (e.currentTarget.querySelector("input") as HTMLInputElement)?.focus()}
+          >
+            {tags.filter((t) => !suggestedTags.includes(t) || tags.includes(t)).map((tag) => (
+              <span
+                key={tag}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.25rem",
+                  padding: "0.15rem 0.625rem",
+                  borderRadius: "100px",
+                  background: "var(--hunter-purple)",
+                  color: "#fff",
+                  fontSize: "0.75rem",
+                  fontWeight: 500,
+                }}
+              >
+                #{tag}
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setTags((prev) => prev.filter((t) => t !== tag)); }}
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", padding: 0, fontSize: "0.7rem", lineHeight: 1 }}
+                >
+                  ✕
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagInputKeyDown}
+              placeholder={tags.length === 0 ? "Type a tag and press Enter..." : ""}
+              style={{
+                border: "none",
+                outline: "none",
+                background: "transparent",
+                fontSize: "0.875rem",
+                color: "var(--foreground)",
+                minWidth: "120px",
+                flex: 1,
+              }}
+            />
+          </div>
+          <p style={{ marginTop: "0.35rem", fontSize: "0.75rem", color: "var(--text-faint)" }}>
+            Select from suggestions above or type your own and press Enter.
+          </p>
+        </div>
+
+        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-purple w-full glow-sm"
+          className="btn btn-purple"
+          style={{ width: "100%", justifyContent: "center", padding: "0.8rem", fontSize: "0.9375rem" }}
         >
-          {isSubmitting ? "Saving..." : "Submit Recommendation"}
+          {isSubmitting ? (
+            <>
+              <span
+                style={{
+                  width: "1rem",
+                  height: "1rem",
+                  borderRadius: "50%",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                  borderTopColor: "#fff",
+                  animation: "spin 0.7s linear infinite",
+                  display: "inline-block",
+                }}
+              />
+              Saving...
+            </>
+          ) : (
+            "Submit Recommendation"
+          )}
         </button>
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </form>
   );
 }
