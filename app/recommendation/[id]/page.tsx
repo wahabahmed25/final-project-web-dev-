@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -14,6 +14,26 @@ import {
 } from "@/lib/recommendation";
 import { getCategoryLabel, getCategoryIcon, getCategoryAccent } from "@/data/categories";
 import { DetailSkeleton } from "@/components/LoadingSkeleton";
+import type { Recommendation } from "@/types/recommendation";*/
+
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useParams, notFound } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
+import {
+  getRecommendationById,
+  upvoteRecommendation,
+  getComments,
+  addComment,
+  getRecommendationsByCategory,
+  type Comment,
+} from "@/lib/recommendation";
+import { getCategoryLabel, getCategoryIcon, getCategoryAccent } from "@/data/categories";
+import { DetailSkeleton } from "@/components/LoadingSkeleton";
+import RecommendationCard from "@/components/RecommentationCard";
 import type { Recommendation } from "@/types/recommendation";
 
 function StarDisplay({ rating }: { rating: number }) {
@@ -43,6 +63,8 @@ export default function RecommendationDetailPage() {
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
+  //New Line added 
+  const [related, setRelated] = useState<Recommendation[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -59,7 +81,7 @@ export default function RecommendationDetailPage() {
     }
     load();
   }, [id]);
-
+/*
   useEffect(() => {
     async function loadComments() {
       try {
@@ -73,7 +95,21 @@ export default function RecommendationDetailPage() {
       }
     }
     loadComments();
-  }, [id]);
+  }, [id]);*/
+  //New effect
+  useEffect(() => {
+  async function loadRelated() {
+    if (!recommendation) return;
+    try {
+      const data = await getRecommendationsByCategory(recommendation.category);
+      const others = data.filter((r) => r.id !== id).slice(0, 3);
+      setRelated(others);
+    } catch {
+      // Silently fail
+    }
+  }
+  loadRelated();
+}, [recommendation, id]);
 
   async function handleUpvote() {
     if (!recommendation) return;
@@ -462,6 +498,47 @@ export default function RecommendationDetailPage() {
           </div>
         )}
       </section>
+
+      {/*==== Related Recomendations ===========*/}
+      {related.length > 0 && (
+        <section style={{ marginTop: "1.5rem" }}>
+          <div style={{ marginBottom: "1rem" }}>
+            <span
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--hunter-gold-dark)",
+              }}
+            >
+              ✦ More like this
+            </span>
+            <h2
+              style={{
+                fontFamily: "'DM Serif Display', serif",
+                fontSize: "1.375rem",
+                color: "var(--foreground)",
+                margin: "0.25rem 0 0",
+              }}
+            >
+              Related Recommendations
+            </h2>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: "1rem",
+            }}
+          >
+            {related.map((r) => (
+              <RecommendationCard key={r.id} recommendation={r} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
