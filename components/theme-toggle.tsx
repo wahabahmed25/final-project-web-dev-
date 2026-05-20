@@ -1,37 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 export default function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <button
-        className="rounded-md border px-3 py-2 text-sm"
-        aria-label="Toggle theme"
-      >
-        Theme
-      </button>
-    );
-  }
-
-  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <button
-      onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-      className="rounded-md border px-3 py-2 text-sm transition hover:opacity-80"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="Toggle theme"
       type="button"
+      suppressHydrationWarning
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.375rem",
+        padding: "0.375rem 0.75rem",
+        borderRadius: "100px",
+        border: "1.5px solid var(--border)",
+        background: "var(--surface)",
+        color: "var(--text-muted)",
+        fontSize: "0.8rem",
+        fontWeight: 600,
+        cursor: "pointer",
+        transition: "all 0.15s",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--hunter-purple)";
+        (e.currentTarget as HTMLButtonElement).style.color = "var(--hunter-purple)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+        (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)";
+      }}
     >
-      {currentTheme === "dark" ? "☀️ Light" : "🌙 Dark"}
+      <span suppressHydrationWarning>
+        {resolvedTheme === "dark" ? "☀️" : "🌙"}
+      </span>
+      <span suppressHydrationWarning>
+        {resolvedTheme === "dark" ? "Light" : "Dark"}
+      </span>
     </button>
   );
 }
