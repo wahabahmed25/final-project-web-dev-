@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/NavBar";
 import { AuthProvider } from "@/context/AuthContext";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Hunter Recommendations Hub",
@@ -15,12 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>
-          <Navbar />
-          <main>{children}</main>
-        </AuthProvider>
+        <Providers>
+          <AuthProvider>
+            <Navbar />
+            {children}
+          </AuthProvider>
+        </Providers>
       </body>
     </html>
   );
