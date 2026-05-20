@@ -60,6 +60,7 @@ function convertDocToRecommendation(
     createdByName: String(data.createdByName ?? "Student"),
     createdAt: data.createdAt as Recommendation["createdAt"],
     upvotes: Number(data.upvotes ?? 0),
+    downvotes: Number(data.downvotes ?? 0),
   };
 }
 
