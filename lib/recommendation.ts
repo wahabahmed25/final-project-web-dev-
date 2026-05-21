@@ -195,3 +195,54 @@ export async function addComment(
     createdAt: serverTimestamp(),
   });
 }
+
+// ---- Reviews ----
+
+export type ReviewInput = {
+  rating: number;
+  liked: string;
+  heads_up: string;
+  createdBy: string;
+  createdByName: string;
+};
+
+export type Review = {
+  id: string;
+  rating: number;
+  liked: string;
+  heads_up: string;
+  createdBy: string;
+  createdByName: string;
+  createdAt?: Timestamp;
+};
+
+export async function getReviews(recommendationId: string): Promise<Review[]> {
+  const reviewsRef = collection(db, "recommendations", recommendationId, "reviews");
+  const q = query(reviewsRef, orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      rating: Number(data.rating ?? 0),
+      liked: String(data.liked ?? ""),
+      heads_up: String(data.heads_up ?? ""),
+      createdBy: String(data.createdBy ?? ""),
+      createdByName: String(data.createdByName ?? "Student"),
+      createdAt: data.createdAt as Timestamp | undefined,
+    };
+  });
+}
+
+export async function addReview(
+  recommendationId: string,
+  input: ReviewInput
+) {
+  const reviewsRef = collection(db, "recommendations", recommendationId, "reviews");
+  return addDoc(reviewsRef, {
+    ...input,
+    liked: input.liked.trim(),
+    heads_up: input.heads_up.trim(),
+    createdAt: serverTimestamp(),
+  });
+}

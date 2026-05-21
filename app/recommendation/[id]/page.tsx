@@ -1,5 +1,6 @@
 "use client";
 
+import ReviewSection from "@/components/ReviewSection";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, notFound } from "next/navigation";
@@ -499,6 +500,10 @@ export default function RecommendationDetailPage() {
           </div>
         </section>
       )}
+
+      {/* Student Reviews */}
+      <ReviewSection recommendationId={id} />
+
     </div>
   );
 }

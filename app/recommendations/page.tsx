@@ -1,5 +1,7 @@
 "use client";
 
+import TagFilter from "@/components/TagFilter";
+import { getCategoryTags } from "@/data/categories";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import RecommendationCard from "@/components/RecommentationCard";
@@ -26,6 +28,7 @@ export default function RecommendationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [minRating, setMinRating] = useState(0);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
   const [shufflePick, setShufflePick] = useState<Recommendation | null>(null);
 
   useEffect(() => {
@@ -44,32 +47,37 @@ export default function RecommendationsPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    let list = [...recommendations];
+  let list = [...recommendations];
 
-    if (activeCategory !== "all") {
-      list = list.filter((r) => r.category === activeCategory);
-    }
+  if (activeCategory !== "all") {
+    list = list.filter((r) => r.category === activeCategory);
+  }
 
-    const term = search.toLowerCase().trim();
-    if (term) {
-      list = list.filter((r) =>
-        [r.title, r.description, r.location, r.category, ...r.tags]
-          .join(" ")
-          .toLowerCase()
-          .includes(term)
-      );
-    }
+  const term = search.toLowerCase().trim();
+  if (term) {
+    list = list.filter((r) =>
+      [r.title, r.description, r.location, r.category, ...r.tags]
+        .join(" ")
+        .toLowerCase()
+        .includes(term)
+    );
+  }
 
-    if (minRating > 0) list = list.filter((r) => r.rating >= minRating);
+  if (minRating > 0) list = list.filter((r) => r.rating >= minRating);
 
-    switch (sort) {
-      case "top-rated": list.sort((a, b) => b.rating - a.rating); break;
-      case "popular":   list.sort((a, b) => b.upvotes - a.upvotes); break;
-      default:          list.sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
-    }
+  if (activeTags.length > 0) {
+    list = list.filter((r) =>
+      activeTags.every((tag) => r.tags.map((t) => t.toLowerCase()).includes(tag.toLowerCase()))
+    );
+  }
 
-    return list;
-  }, [recommendations, search, sort, activeCategory, minRating]);
+  switch (sort) {
+    case "top-rated": list.sort((a, b) => b.rating - a.rating); break;
+    case "popular": list.sort((a, b) => b.upvotes - a.upvotes); break;
+    default: list.sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+  }
+  return list;
+}, [recommendations, search, sort, activeCategory, minRating, activeTags]);
 
   const rankedIds = useMemo(() => {
     const sorted = [...filtered].sort((a, b) => (b.upvotes - (b.downvotes ?? 0)) - (a.upvotes - (a.downvotes ?? 0)));
@@ -154,7 +162,7 @@ export default function RecommendationsPage() {
         <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
           <button
             className={`tag${activeCategory === "all" ? " active" : ""}`}
-            onClick={() => setActiveCategory("all")}
+            onClick={() => { setActiveCategory("all"); setActiveTags([]); }}
           >
             All
           </button>
@@ -162,7 +170,10 @@ export default function RecommendationsPage() {
             <button
               key={cat.value}
               className={`tag${activeCategory === cat.value ? " active" : ""}`}
-              onClick={() => setActiveCategory(activeCategory === cat.value ? "all" : cat.value)}
+              onClick={() => {
+  setActiveCategory(activeCategory === cat.value ? "all" : cat.value);
+  setActiveTags([]);
+}}
             >
               {cat.icon} {cat.label}
             </button>
@@ -203,6 +214,26 @@ export default function RecommendationsPage() {
             </span>
           )}
         </div>
+
+        {/* Smart Tag Filters */}
+        {(() => {
+          const tagPool =
+            activeCategory !== "all"
+              ? getCategoryTags(activeCategory)
+              : Array.from(new Set(recommendations.flatMap((r) => r.tags))).slice(0, 20);
+          return (
+            <TagFilter
+              allTags={tagPool}
+              activeTags={activeTags}
+              onToggle={(tag) =>
+                setActiveTags((prev) =>
+                  prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+                )
+              }
+              onClear={() => setActiveTags([])}
+            />
+          );
+        })()}
 
         {/* Results */}
         <div style={{ marginTop: "1.75rem" }}>

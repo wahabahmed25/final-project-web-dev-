@@ -21,3 +21,13 @@ export type Recommendation = {
   upvotes: number;
   downvotes: number;
 };
+
+export type Review = {
+  id: string;
+  rating: number;
+  liked: string;
+  heads_up: string;
+  createdBy: string;
+  createdByName: string;
+  createdAt?: import("firebase/firestore").Timestamp;
+};
