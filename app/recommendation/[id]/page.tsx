@@ -12,13 +12,12 @@ import {
   deleteRecommendation,
   getComments,
   addComment,
+  getRecommendationsByCategory,
   type Comment,
 } from "@/lib/recommendation";
 import { getCategoryLabel, getCategoryIcon, getCategoryAccent } from "@/data/categories";
 import { DetailSkeleton } from "@/components/LoadingSkeleton";
-import VoteEffect from "@/components/VoteEffect";
-import ShareButton from "@/components/ShareButton";
-import BookmarkButton from "@/components/BookmarkButton";
+import RecommendationCard from "@/components/RecommentationCard";
 import type { Recommendation } from "@/types/recommendation";
 
 function StarDisplay({ rating }: { rating: number }) {
@@ -44,18 +43,16 @@ export default function RecommendationDetailPage() {
   const [loading, setLoading] = useState(true);
   const [upvoting, setUpvoting] = useState(false);
   const [downvoting, setDownvoting] = useState(false);
-  const [upvoteAnim, setUpvoteAnim] = useState(false);
-  const [downvoteAnim, setDownvoteAnim] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
 
-  const clearUpvoteAnim = useCallback(() => setUpvoteAnim(false), []);
-  const clearDownvoteAnim = useCallback(() => setDownvoteAnim(false), []);
+  const [related, setRelated] = useState<Recommendation[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -88,13 +85,45 @@ export default function RecommendationDetailPage() {
     loadComments();
   }, [id]);
 
+  useEffect(() => {
+    async function loadRelated() {
+      if (!recommendation) return;
+      try {
+        const data = await getRecommendationsByCategory(recommendation.category);
+        setRelated(data.filter((r) => r.id !== id).slice(0, 3));
+      } catch {
+        // silently fail
+      }
+    }
+    loadRelated();
+  }, [recommendation, id]);
+
+  async function handleShare() {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: recommendation?.title,
+          text: recommendation?.description,
+          url: window.location.href,
+        });
+        showToast("Shared successfully!", "success");
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        showToast("Link copied!", "success");
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      showToast("Could not share.", "error");
+    }
+  }
+
   async function handleUpvote() {
     if (!recommendation) return;
     try {
       setUpvoting(true);
       await upvoteRecommendation(recommendation.id);
       setRecommendation({ ...recommendation, upvotes: recommendation.upvotes + 1 });
-      setUpvoteAnim(true);
       showToast("Upvoted! 👍", "success");
     } catch {
       showToast("Could not upvote right now.", "error");
@@ -109,8 +138,7 @@ export default function RecommendationDetailPage() {
       setDownvoting(true);
       await downvoteRecommendation(recommendation.id);
       setRecommendation({ ...recommendation, downvotes: (recommendation.downvotes ?? 0) + 1 });
-      setDownvoteAnim(true);
-      showToast("Downvoted.", "success");
+      showToast("Noted. 👎", "info");
     } catch {
       showToast("Could not downvote right now.", "error");
     } finally {
@@ -155,7 +183,7 @@ export default function RecommendationDetailPage() {
   if (loading) {
     return (
       <div style={{ maxWidth: 768, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
-        <div style={{ height: "1rem", width: "5rem", marginBottom: "1.5rem", borderRadius: "100px" }} className="skeleton" />
+        <div className="skeleton" style={{ height: "1rem", width: "5rem", marginBottom: "1.5rem", borderRadius: "100px" }} />
         <DetailSkeleton />
       </div>
     );
@@ -175,19 +203,14 @@ export default function RecommendationDetailPage() {
   const icon = getCategoryIcon(recommendation.category);
 
   return (
-    <div className="page-detail" style={{ maxWidth: 768, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+    <div style={{ maxWidth: 768, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
       {/* Back */}
       <Link
         href="/recommendations"
         style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.375rem",
-          fontSize: "0.875rem",
-          fontWeight: 600,
-          color: "var(--hunter-purple)",
-          textDecoration: "none",
-          marginBottom: "1.5rem",
+          display: "inline-flex", alignItems: "center", gap: "0.375rem",
+          fontSize: "0.875rem", fontWeight: 600, color: "var(--hunter-purple)",
+          textDecoration: "none", marginBottom: "1.5rem",
         }}
       >
         ← Back to recommendations
@@ -209,24 +232,16 @@ export default function RecommendationDetailPage() {
             style={{
               fontFamily: "'DM Serif Display', serif",
               fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-              color: "var(--foreground)",
-              flex: 1,
-              minWidth: 200,
-              margin: 0,
+              color: "var(--foreground)", flex: 1, minWidth: 200, margin: 0,
             }}
           >
             {recommendation.title}
           </h1>
-
           <div
-            className="rating-badge"
             style={{
-              background: "var(--hunter-gold-light)",
-              border: "1px solid rgba(238,177,17,0.3)",
-              borderRadius: "var(--radius-lg)",
-              padding: "0.625rem 1rem",
-              textAlign: "center",
-              flexShrink: 0,
+              background: "var(--hunter-gold-light)", border: "1px solid rgba(238,177,17,0.3)",
+              borderRadius: "var(--radius-lg)", padding: "0.625rem 1rem",
+              textAlign: "center", flexShrink: 0,
             }}
           >
             <p style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--hunter-gold-dark)", margin: "0 0 0.2rem" }}>
@@ -250,7 +265,7 @@ export default function RecommendationDetailPage() {
           </p>
         </div>
 
-        {/* Location */}
+        {/* Location — opens Google Maps */}
         <div style={{ marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-faint)", marginBottom: "0.5rem" }}>
             Location
@@ -274,13 +289,7 @@ export default function RecommendationDetailPage() {
             </h2>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
               {recommendation.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="tag"
-                  style={{ cursor: "default" }}
-                >
-                  #{tag}
-                </span>
+                <span key={tag} className="tag" style={{ cursor: "default" }}>#{tag}</span>
               ))}
             </div>
           </div>
@@ -292,7 +301,7 @@ export default function RecommendationDetailPage() {
             <Link
               href={`/recommendation/${recommendation.id}/edit`}
               className="btn btn-outline"
-              style={{ padding: "0.45rem 1rem", fontSize: "0.82rem", gap: "0.35rem" }}
+              style={{ padding: "0.45rem 1rem", fontSize: "0.82rem" }}
             >
               ✏️ Edit
             </Link>
@@ -310,70 +319,59 @@ export default function RecommendationDetailPage() {
           </div>
         )}
 
-        {/* Vote buttons */}
+        {/* Vote + Share */}
         <div style={{ borderTop: "1px solid var(--border-light)", paddingTop: "1.5rem" }}>
           {user ? (
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
               {/* Upvote */}
-              <div style={{ position: "relative" }}>
-                <button
-                  onClick={handleUpvote}
-                  disabled={upvoting}
-                  className="btn btn-purple"
-                  style={{ gap: "0.5rem" }}
-                >
-                  ▲ {upvoting ? "..." : `Upvote (${recommendation.upvotes})`}
-                </button>
-                <VoteEffect type="up" active={upvoteAnim} onDone={clearUpvoteAnim} />
-              </div>
+              <button
+                onClick={handleUpvote}
+                disabled={upvoting}
+                className="btn btn-purple"
+              >
+                ▲ {upvoting ? "..." : `Upvote (${recommendation.upvotes})`}
+              </button>
 
               {/* Downvote */}
-              <div style={{ position: "relative" }}>
-                <button
-                  onClick={handleDownvote}
-                  disabled={downvoting}
-                  className="btn btn-outline"
-                  style={{ gap: "0.5rem", borderColor: "#f43f5e", color: "#f43f5e" }}
-                >
-                  ▼ {downvoting ? "..." : `Downvote (${recommendation.downvotes ?? 0})`}
-                </button>
-                <VoteEffect type="down" active={downvoteAnim} onDone={clearDownvoteAnim} />
-              </div>
+              <button
+                onClick={handleDownvote}
+                disabled={downvoting}
+                className="btn btn-outline"
+                style={{ borderColor: "#f43f5e", color: "#f43f5e" }}
+              >
+                ▼ {downvoting ? "..." : `Downvote (${recommendation.downvotes ?? 0})`}
+              </button>
 
-              <span style={{ fontSize: "0.825rem", color: "var(--text-faint)", marginLeft: "0.25rem" }}>
+              {/* Share */}
+              <button onClick={handleShare} className="btn btn-ghost" type="button">
+                {copied ? "✓ Copied!" : "🔗 Share"}
+              </button>
+
+              <span style={{ fontSize: "0.825rem", color: "var(--text-faint)", marginLeft: "auto" }}>
                 {recommendation.upvotes} student{recommendation.upvotes !== 1 ? "s" : ""} found this helpful
               </span>
             </div>
           ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-              <Link href="/login" className="btn btn-purple">
-                Login to vote
-              </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+              <Link href="/login" className="btn btn-purple">Login to vote</Link>
+              <button onClick={handleShare} className="btn btn-ghost" type="button">
+                {copied ? "✓ Copied!" : "🔗 Share"}
+              </button>
               <span style={{ fontSize: "0.85rem", color: "var(--text-faint)" }}>
                 {recommendation.upvotes} upvote{recommendation.upvotes !== 1 ? "s" : ""}
               </span>
             </div>
           )}
-
-          {/* Share + Bookmark */}
-          <div style={{ display: "flex", gap: "0.625rem", marginTop: "1rem", flexWrap: "wrap" }}>
-            <ShareButton title={recommendation.title} />
-            <BookmarkButton recommendationId={recommendation.id} />
-          </div>
         </div>
       </article>
 
       {/* ── Comments ── */}
-      <section className="card" style={{ padding: "1.75rem" }}>
+      <section className="card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
         <h2
           style={{
-            fontFamily: "'DM Serif Display', serif",
-            fontSize: "1.375rem",
-            color: "var(--foreground)",
-            marginBottom: "1.5rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
+            fontFamily: "'DM Serif Display', serif", fontSize: "1.375rem",
+            color: "var(--foreground)", marginBottom: "1.5rem",
+            display: "flex", alignItems: "center", gap: "0.5rem",
           }}
         >
           💬 Comments
@@ -424,16 +422,10 @@ export default function RecommendationDetailPage() {
         ) : (
           <div
             style={{
-              background: "var(--hunter-purple-faint)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius-lg)",
-              padding: "1rem 1.25rem",
-              marginBottom: "1.5rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: "0.75rem",
+              background: "var(--hunter-purple-faint)", border: "1px solid var(--border)",
+              borderRadius: "var(--radius-lg)", padding: "1rem 1.25rem", marginBottom: "1.5rem",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              flexWrap: "wrap", gap: "0.75rem",
             }}
           >
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", margin: 0 }}>Log in to leave a comment.</p>
@@ -488,6 +480,25 @@ export default function RecommendationDetailPage() {
           </div>
         )}
       </section>
+
+      {/* ── Related Recommendations ── */}
+      {related.length > 0 && (
+        <section style={{ marginTop: "1.5rem" }}>
+          <div style={{ marginBottom: "1rem" }}>
+            <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--hunter-gold-dark)" }}>
+              ✦ More like this
+            </span>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.375rem", color: "var(--foreground)", margin: "0.25rem 0 0" }}>
+              Related Recommendations
+            </h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+            {related.map((r) => (
+              <RecommendationCard key={r.id} recommendation={r} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
