@@ -11,14 +11,17 @@ export default function CursorParticles() {
     const pool = containerRef.current;
     if (!pool) return;
 
+    // pool is now guaranteed non-null for the lifetime of this effect
+    const safePool: HTMLDivElement = pool;
+
     let last = 0;
 
     function spawn(x: number, y: number) {
       const el = document.createElement("span");
       const symbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-      const size = 9 + Math.random() * 13;
-      const dx = (Math.random() - 0.5) * 52;
+      const color  = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const size   = 9 + Math.random() * 13;
+      const dx     = (Math.random() - 0.5) * 52;
 
       el.textContent = symbol;
       el.style.cssText = `
@@ -34,7 +37,7 @@ export default function CursorParticles() {
         --dx:${dx}px;
         animation:cursor-spark 0.85s ease-out forwards;
       `;
-      pool.appendChild(el);
+      safePool.appendChild(el);
       setTimeout(() => el.remove(), 900);
     }
 
