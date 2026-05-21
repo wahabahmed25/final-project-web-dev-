@@ -63,8 +63,9 @@ export default function RecommendationDetailPage() {
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
-  //New Line added 
+  //New Lines added 
   const [related, setRelated] = useState<Recommendation[]>([]);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -81,7 +82,7 @@ export default function RecommendationDetailPage() {
     }
     load();
   }, [id]);
-/*
+
   useEffect(() => {
     async function loadComments() {
       try {
@@ -95,7 +96,8 @@ export default function RecommendationDetailPage() {
       }
     }
     loadComments();
-  }, [id]);*/
+  }, [id]);
+
   //New effect
   useEffect(() => {
   async function loadRelated() {
@@ -110,6 +112,37 @@ export default function RecommendationDetailPage() {
   }
   loadRelated();
 }, [recommendation, id]);
+/*
+  function handleShare(){
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    showToast("Link copied!", "success");
+    setTimeout(() => setCopied(false), 2000);
+  }
+*/
+
+async function handleShare() {
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: recommendation?.title,
+        text: recommendation?.description,
+        url: window.location.href,
+      });
+
+      showToast("Shared successfully!", "success");
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+
+      setCopied(true);
+      showToast("Link copied!", "success");
+
+      setTimeout(() => setCopied(false), 2000);
+    }
+  } catch {
+    showToast("Could not share", "error");
+  }
+}
 
   async function handleUpvote() {
     if (!recommendation) return;
@@ -334,6 +367,15 @@ export default function RecommendationDetailPage() {
               Login to upvote ({recommendation.upvotes})
             </Link>
           )}
+
+          <button
+              onClick={handleShare}
+              className="btn btn-outline"
+              type="button"
+            >
+              {copied ? "Copied" : "share"}
+            </button>
+
           <span style={{ fontSize: "0.85rem", color: "var(--text-faint)" }}>
             {recommendation.upvotes} student{recommendation.upvotes !== 1 ? "s" : ""} found this helpful
           </span>
