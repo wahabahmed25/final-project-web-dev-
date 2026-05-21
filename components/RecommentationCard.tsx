@@ -48,7 +48,7 @@ export default function RecommendationCard({
         </div>
       )}
 
-      {/* "New" badge for no-rank cards */}
+      {/* Top Pick badge */}
       {isTop && (
         <div
           style={{
@@ -62,6 +62,26 @@ export default function RecommendationCard({
           }}
         >
           🏆 Top Pick
+        </div>
+      )}
+
+      {/* Rough stamp — top-right corner overlay */}
+      {isTorn && (
+        <div
+          style={{
+            position: "absolute", top: "0.6rem", right: "0.6rem",
+            background: "rgba(239,68,68,0.10)",
+            border: "1.5px solid rgba(239,68,68,0.45)",
+            color: "#ef4444",
+            fontSize: "0.6rem", fontWeight: 800,
+            padding: "0.15rem 0.45rem", borderRadius: "4px",
+            letterSpacing: "0.12em", textTransform: "uppercase",
+            fontFamily: "var(--font-caveat), cursive",
+            zIndex: 10,
+            transform: "rotate(3deg)",
+          }}
+        >
+          😬 Rough
         </div>
       )}
 
@@ -164,16 +184,6 @@ export default function RecommendationCard({
           by {recommendation.createdByName}
         </span>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          {isTorn && (
-            <span style={{
-              background: "rgba(239,68,68,0.12)", color: "#ef4444",
-              fontSize: "0.65rem", fontWeight: 700,
-              padding: "0.15rem 0.5rem", borderRadius: "100px",
-              border: "1px solid rgba(239,68,68,0.30)",
-            }}>
-              😬 Rough
-            </span>
-          )}
           <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--hunter-purple)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
             ▲ {recommendation.upvotes}
           </span>
