@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import HunterHubLogo from "@/components/HunterHubLogo";
 export default function LoginPage() {
   const { user, loading, loginWithGoogle } = useAuth();
   const router = useRouter();
@@ -31,22 +32,14 @@ export default function LoginPage() {
       <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
         {/* Logo mark */}
         <div className="fade-up" style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div
+          <HunterHubLogo
+            size={80}
             style={{
-              width: "4rem",
-              height: "4rem",
-              borderRadius: "var(--radius-lg)",
-              background: "var(--hunter-purple)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "1.875rem",
               margin: "0 auto 1rem",
-              boxShadow: "var(--shadow-lg)",
+              display: "block",
+              filter: "drop-shadow(0 4px 18px rgba(92,45,139,0.55))",
             }}
-          >
-            
-          </div>
+          />
           <h1
             style={{
               fontFamily: "'DM Serif Display', serif",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import ThemeToggle from "@/components/theme-toggle";
+import HunterHubLogo from "@/components/HunterHubLogo";
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth();
@@ -44,23 +45,7 @@ export default function Navbar() {
             href="/"
             style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.625rem" }}
           >
-            <span
-              className="logo-icon"
-              style={{
-                width: "2rem",
-                height: "2rem",
-                borderRadius: "8px",
-                background: "var(--hunter-purple)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1rem",
-                flexShrink: 0,
-                transition: "box-shadow 0.2s ease",
-              }}
-            >
-              
-            </span>
+            <HunterHubLogo size={34} className="logo-icon" style={{ flexShrink: 0, transition: "box-shadow 0.2s ease" }} />
             <span
               style={{
                 fontFamily: "'DM Serif Display', serif",
