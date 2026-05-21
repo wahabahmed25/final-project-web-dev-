@@ -24,7 +24,6 @@ export default function Navbar() {
           top: 0,
           zIndex: 50,
           borderBottom: "1px solid var(--border)",
-          /* Use surface variable instead of hardcoded white */
           background: "color-mix(in srgb, var(--surface) 92%, transparent)",
           backdropFilter: "blur(16px)",
         }}
@@ -91,7 +90,6 @@ export default function Navbar() {
 
             <div style={{ width: "1px", height: "1.25rem", background: "var(--border)", margin: "0 0.5rem" }} />
 
-            {/* Theme toggle */}
             <ThemeToggle />
 
             <div style={{ width: "1px", height: "1.25rem", background: "var(--border)", margin: "0 0.5rem" }} />
