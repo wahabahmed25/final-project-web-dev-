@@ -53,11 +53,14 @@ export default function Navbar() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "1rem",
+                fontSize: "1.5rem",
+                fontWeight: 700,
+                color: "#fff",
                 flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(92,45,139,0.25)"
               }}
             >
-              
+              H
             </span>
             <span
               style={{
